@@ -41,7 +41,7 @@
     .bm-marker-poi-icon {
       opacity: 1;
       transition: opacity 0.3s;
-      filter: drop-shadow(1px 1px 3px #0008);
+      filter: drop-shadow(1px 1px 3px color-mix(in srgb, var(--md-sys-color-shadow) 53%, transparent));
     }
 
     &.bm-marker-highlight {
@@ -64,7 +64,7 @@
 
     color: var(--theme-fg);
     background-color: var(--theme-bg);
-    filter: drop-shadow(1px 1px 3px #0008);
+    filter: drop-shadow(1px 1px 3px color-mix(in srgb, var(--md-sys-color-shadow) 53%, transparent));
     padding: 0.5em;
 
     > hr {
@@ -114,7 +114,7 @@
 
           background: var(--theme-bg);
           color: var(--theme-fg-light);
-          filter: drop-shadow(1px 1px 3px #0008);
+          filter: drop-shadow(1px 1px 3px color-mix(in srgb, var(--md-sys-color-shadow) 53%, transparent));
           font-size: 0.75em;
           line-height: 1em;
           padding: .5em;
@@ -160,7 +160,7 @@
   .bm-marker-player {
     position: relative;
     transform: translate(-50%, -50%);
-    filter: drop-shadow(1px 1px 3px #0008);
+    filter: drop-shadow(1px 1px 3px color-mix(in srgb, var(--md-sys-color-shadow) 53%, transparent));
 
     img {
       width: 32px;
@@ -176,8 +176,12 @@
       transform: translate(-50%, -100%);
 
       padding: 0.25em;
-      background-color: #0008;
-      color: #fff;
+      // The inverse roles, which is exactly what Material Design 3 provides for chrome that
+      // has to read against content it does not control - the same pair a snackbar uses. A
+      // surface role would follow the theme and disappear over a map that did not.
+      background-color: color-mix(in srgb, var(--md-sys-color-inverse-surface) 88%, transparent);
+      color: var(--md-sys-color-inverse-on-surface);
+      border-radius: $md-shape-xs;
 
       transition: opacity 0.3s;
     }

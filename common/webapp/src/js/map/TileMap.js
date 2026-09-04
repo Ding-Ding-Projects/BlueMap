@@ -26,6 +26,10 @@ import {ClampToEdgeWrapping, LinearFilter, NearestFilter, Texture} from "three";
 
 export class TileMap {
 
+    // lang-gui-exempt: a data colour, not chrome, and it must stay exactly these values. These are written
+    // into a texture the renderer reads back to decide whether a tile has loaded - black is
+    // zero and white is full. Theming them would not restyle anything; it would break tile
+    // loading, because the shader is reading a number rather than looking at a colour.
     static EMPTY = "#000";
     static LOADED = "#fff";
 
