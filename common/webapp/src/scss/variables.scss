@@ -63,10 +63,52 @@ $md-state-pressed: 0.1;
 $md-state-dragged: 0.16;
 
 // Motion. One easing curve and three durations, so nothing invents its own.
+/*
+ * The motion set.
+ *
+ * One easing and three durations were defined, which meant every transition in the app used
+ * the same curve regardless of what it was doing. Material distinguishes them for a reason
+ * that is visible rather than theoretical: something entering the screen should decelerate
+ * into place and something leaving should accelerate away, and a single symmetric curve
+ * makes both look like the same generic slide.
+ *
+ * The emphasized set is the one Material asks for on anything a person is meant to notice -
+ * it overshoots slightly, which is what reads as deliberate rather than mechanical.
+ */
 $md-easing-standard: cubic-bezier(0.2, 0, 0, 1);
-$md-duration-short: 100ms;
-$md-duration-medium: 200ms;
-$md-duration-long: 400ms;
+$md-easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+$md-easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+$md-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+$md-easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+$md-easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+$md-easing-linear: cubic-bezier(0, 0, 1, 1);
+
+$md-duration-short-1: 50ms;
+$md-duration-short-2: 100ms;
+$md-duration-short-3: 150ms;
+$md-duration-short-4: 200ms;
+$md-duration-medium-1: 250ms;
+$md-duration-medium-2: 300ms;
+$md-duration-medium-3: 350ms;
+$md-duration-medium-4: 400ms;
+$md-duration-long-1: 450ms;
+$md-duration-long-2: 500ms;
+$md-duration-long-3: 550ms;
+$md-duration-long-4: 600ms;
+$md-duration-extra-long-1: 700ms;
+$md-duration-extra-long-2: 800ms;
+$md-duration-extra-long-3: 900ms;
+$md-duration-extra-long-4: 1000ms;
+
+/*
+ * The three names the components here already use, kept and pointed at the scale.
+ *
+ * Renaming them at every call site would be a large diff whose only effect is churn, and the
+ * aliases mean a component written against either spelling gets the same number.
+ */
+$md-duration-short: $md-duration-short-2;
+$md-duration-medium: $md-duration-short-4;
+$md-duration-long: $md-duration-medium-4;
 
 // Minimum touch target. Every interactive element honours this even where its
 // painted box is deliberately smaller.
@@ -79,20 +121,71 @@ $md-touch-target: 48px;
   // is the closest honest equivalent. Stated here rather than left to be noticed.
   font-family: "Quicksand", system-ui, sans-serif;
 
+  /*
+   * The complete scale, all fifteen roles.
+   *
+   * Seven were defined and eight were not, which meant a surface reaching for a display or
+   * a body-small got nothing and silently inherited whatever was in scope. A partial scale
+   * is worse than none: the roles that exist look authoritative, so the missing ones read
+   * as roles the design deliberately does not use rather than as gaps.
+   *
+   * Every role carries all four properties. Leaving weight or tracking off a role means the
+   * call site has to remember to supply them, which is exactly how two places rendering the
+   * same role end up looking different.
+   */
+  --md-sys-typescale-display-large-size: 57px;
+  --md-sys-typescale-display-large-line: 64px;
+  --md-sys-typescale-display-large-weight: 400;
+  --md-sys-typescale-display-large-tracking: -0.25px;
+  --md-sys-typescale-display-medium-size: 45px;
+  --md-sys-typescale-display-medium-line: 52px;
+  --md-sys-typescale-display-medium-weight: 400;
+  --md-sys-typescale-display-medium-tracking: 0;
+  --md-sys-typescale-display-small-size: 36px;
+  --md-sys-typescale-display-small-line: 44px;
+  --md-sys-typescale-display-small-weight: 400;
+  --md-sys-typescale-display-small-tracking: 0;
+
+  --md-sys-typescale-headline-large-size: 32px;
+  --md-sys-typescale-headline-large-line: 40px;
+  --md-sys-typescale-headline-large-weight: 400;
+  --md-sys-typescale-headline-large-tracking: 0;
+  --md-sys-typescale-headline-medium-size: 28px;
+  --md-sys-typescale-headline-medium-line: 36px;
+  --md-sys-typescale-headline-medium-weight: 400;
+  --md-sys-typescale-headline-medium-tracking: 0;
+  --md-sys-typescale-headline-small-weight: 400;
+  --md-sys-typescale-headline-small-tracking: 0;
   --md-sys-typescale-headline-small-size: 24px;
   --md-sys-typescale-headline-small-line: 32px;
   --md-sys-typescale-title-large-size: 22px;
   --md-sys-typescale-title-large-line: 28px;
+  --md-sys-typescale-title-large-weight: 400;
+  --md-sys-typescale-title-large-tracking: 0;
+  --md-sys-typescale-title-small-size: 14px;
+  --md-sys-typescale-title-small-line: 20px;
+  --md-sys-typescale-title-small-weight: 500;
+  --md-sys-typescale-title-small-tracking: 0.1px;
   --md-sys-typescale-title-medium-size: 16px;
   --md-sys-typescale-title-medium-line: 24px;
   --md-sys-typescale-title-medium-weight: 500;
   --md-sys-typescale-title-medium-tracking: 0.15px;
+  --md-sys-typescale-body-large-weight: 400;
+  --md-sys-typescale-body-small-size: 12px;
+  --md-sys-typescale-body-small-line: 16px;
+  --md-sys-typescale-body-small-weight: 400;
+  --md-sys-typescale-body-small-tracking: 0.4px;
+  --md-sys-typescale-body-medium-weight: 400;
   --md-sys-typescale-body-large-size: 16px;
   --md-sys-typescale-body-large-line: 24px;
   --md-sys-typescale-body-large-tracking: 0.5px;
   --md-sys-typescale-body-medium-size: 14px;
   --md-sys-typescale-body-medium-line: 20px;
   --md-sys-typescale-body-medium-tracking: 0.25px;
+  --md-sys-typescale-label-small-size: 11px;
+  --md-sys-typescale-label-small-line: 16px;
+  --md-sys-typescale-label-small-weight: 500;
+  --md-sys-typescale-label-small-tracking: 0.5px;
   --md-sys-typescale-label-large-size: 14px;
   --md-sys-typescale-label-large-line: 20px;
   --md-sys-typescale-label-large-weight: 500;
@@ -112,20 +205,20 @@ $md-touch-target: 48px;
   // rest genuinely has no shadow instead of an invisible one that still paints.
   --md-sys-elevation-0: none;
   --md-sys-elevation-1:
-    0 1px 2px 0 rgb(0 0 0 / 0.3),
-    0 1px 3px 1px rgb(0 0 0 / 0.15);
+    0 1px 2px 0 rgb(from var(--md-sys-color-shadow) r g b / 0.3),
+    0 1px 3px 1px rgb(from var(--md-sys-color-shadow) r g b / 0.15);
   --md-sys-elevation-2:
-    0 1px 2px 0 rgb(0 0 0 / 0.3),
-    0 2px 6px 2px rgb(0 0 0 / 0.15);
+    0 1px 2px 0 rgb(from var(--md-sys-color-shadow) r g b / 0.3),
+    0 2px 6px 2px rgb(from var(--md-sys-color-shadow) r g b / 0.15);
   --md-sys-elevation-3:
-    0 4px 8px 3px rgb(0 0 0 / 0.15),
-    0 1px 3px 0 rgb(0 0 0 / 0.3);
+    0 4px 8px 3px rgb(from var(--md-sys-color-shadow) r g b / 0.15),
+    0 1px 3px 0 rgb(from var(--md-sys-color-shadow) r g b / 0.3);
   --md-sys-elevation-4:
-    0 6px 10px 4px rgb(0 0 0 / 0.15),
-    0 2px 3px 0 rgb(0 0 0 / 0.3);
+    0 6px 10px 4px rgb(from var(--md-sys-color-shadow) r g b / 0.15),
+    0 2px 3px 0 rgb(from var(--md-sys-color-shadow) r g b / 0.3);
   --md-sys-elevation-5:
-    0 8px 12px 6px rgb(0 0 0 / 0.15),
-    0 4px 4px 0 rgb(0 0 0 / 0.3);
+    0 8px 12px 6px rgb(from var(--md-sys-color-shadow) r g b / 0.15),
+    0 4px 4px 0 rgb(from var(--md-sys-color-shadow) r g b / 0.3);
 }
 
 // Maps the legacy upstream names onto M3 roles.
@@ -180,6 +273,36 @@ $md-touch-target: 48px;
   --md-sys-color-inverse-primary: #a9c7ff;
   --md-sys-color-scrim: #000000;
   --md-sys-color-shadow: #000000;
+  --md-sys-color-surface-dim: #dbd9dd;
+  --md-sys-color-surface-bright: #faf9fd;
+  /* The tint an elevated surface takes. Primary by definition in M3, so it is written as
+     the role rather than as a copy of its value, which cannot drift. */
+  --md-sys-color-surface-tint: var(--md-sys-color-primary);
+  /* Deprecated in favour of surface, and kept because code in the wild still asks for it.
+     Pointed at surface rather than given its own value, so the two can never disagree. */
+  --md-sys-color-background: var(--md-sys-color-surface);
+  --md-sys-color-on-background: var(--md-sys-color-on-surface);
+
+  /*
+   * The fixed roles, which hold the same tone in both themes.
+   *
+   * That is their entire purpose and it is easy to mistake for a copy-paste error: a colour
+   * that must not flip when the theme does, for something spanning both - a shared header, an
+   * element carried between a light page and a dark one. Every value below already exists in
+   * this palette as a container or an inverse; they are the same tones named for the job.
+   */
+  --md-sys-color-primary-fixed: #d5e3ff;
+  --md-sys-color-primary-fixed-dim: #a9c7ff;
+  --md-sys-color-on-primary-fixed: #001b3c;
+  --md-sys-color-on-primary-fixed-variant: #004488;
+  --md-sys-color-secondary-fixed: #d9e3f8;
+  --md-sys-color-secondary-fixed-dim: #bdc7dc;
+  --md-sys-color-on-secondary-fixed: #121c2b;
+  --md-sys-color-on-secondary-fixed-variant: #3d4758;
+  --md-sys-color-tertiary-fixed: #bdf0b4;
+  --md-sys-color-tertiary-fixed-dim: #a2d399;
+  --md-sys-color-on-tertiary-fixed: #002203;
+  --md-sys-color-on-tertiary-fixed-variant: #245023;
 
   // The day/night switch is an illustration rather than chrome, so these are its
   // own drawing colours and are exempt exactly as chart data is.
@@ -229,6 +352,32 @@ $md-touch-target: 48px;
   --md-sys-color-inverse-primary: #1a5ba8;
   --md-sys-color-scrim: #000000;
   --md-sys-color-shadow: #000000;
+  --md-sys-color-surface-dim: #111318;
+  --md-sys-color-surface-bright: #37393e;
+  --md-sys-color-surface-tint: var(--md-sys-color-primary);
+  --md-sys-color-background: var(--md-sys-color-surface);
+  --md-sys-color-on-background: var(--md-sys-color-on-surface);
+
+  /*
+   * The fixed roles, which hold the same tone in both themes.
+   *
+   * That is their entire purpose and it is easy to mistake for a copy-paste error: a colour
+   * that must not flip when the theme does, for something spanning both - a shared header, an
+   * element carried between a light page and a dark one. Every value below already exists in
+   * this palette as a container or an inverse; they are the same tones named for the job.
+   */
+  --md-sys-color-primary-fixed: #d5e3ff;
+  --md-sys-color-primary-fixed-dim: #a9c7ff;
+  --md-sys-color-on-primary-fixed: #001b3c;
+  --md-sys-color-on-primary-fixed-variant: #004488;
+  --md-sys-color-secondary-fixed: #d9e3f8;
+  --md-sys-color-secondary-fixed-dim: #bdc7dc;
+  --md-sys-color-on-secondary-fixed: #121c2b;
+  --md-sys-color-on-secondary-fixed-variant: #3d4758;
+  --md-sys-color-tertiary-fixed: #bdf0b4;
+  --md-sys-color-tertiary-fixed-dim: #a2d399;
+  --md-sys-color-on-tertiary-fixed: #002203;
+  --md-sys-color-on-tertiary-fixed-variant: #245023;
 
   --theme-stars-day: #ffffff;
   --theme-moon-day: #ffff00;
