@@ -52,7 +52,15 @@ public class MCAChunkLoader implements ChunkLoader<Chunk> {
             new ChunkVersionLoader<>(Chunk_1_18.Data.class, Chunk_1_18::new, 2844),
             new ChunkVersionLoader<>(Chunk_1_16.Data.class, Chunk_1_16::new, 2500),
             new ChunkVersionLoader<>(Chunk_1_15.Data.class, Chunk_1_15::new, 2200),
-            new ChunkVersionLoader<>(Chunk_1_13.Data.class, Chunk_1_13::new, 0)
+            // 1344 rather than 0. With a floor of 0 this decoder also received every
+            // pre-flattening chunk, and rather than failing it read their Blocks/Data
+            // byte arrays as if they were a palette and an index - producing an empty
+            // chunk, silently. An empty chunk renders as a hole, which is why worlds
+            // from that era came out full of black squares with nothing in the logs.
+            // 1.12.2 is DataVersion 1343, so anything at or below it now goes to the
+            // decoder that understands it.
+            new ChunkVersionLoader<>(Chunk_1_13.Data.class, Chunk_1_13::new, 1344),
+            new ChunkVersionLoader<>(Chunk_1_12.Data.class, Chunk_1_12::new, 0)
     );
 
     private ChunkVersionLoader<?> lastUsedLoader = CHUNK_VERSION_LOADERS.get(0);
