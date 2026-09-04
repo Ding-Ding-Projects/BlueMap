@@ -32,13 +32,39 @@ export default {
 <style lang="scss">
   @import "/src/scss/variables.scss";
 
-  // M3 outlined text field. There is no floating label here (the field is a
-  // compact coordinate entry inside the control bar), so the "x"/"y"/"z"
-  // designator is rendered as a small permanent leading label instead, styled
-  // in label-medium on the on-surface-variant role, matching M3's supporting
-  // text colour.
+  /*
+   * A Material Design 3 filled text field, adapted for a compact coordinate entry.
+   *
+   * It was an outlined field before, and outlined is the variant that reads as a plain HTML
+   * input when it is small: a thin rectangle with a border is what every unstyled `<input>`
+   * on the web looks like, so nothing about it said the interface had been designed. Filled
+   * is the variant Material specifies for dense inline entry, and it is the one that reads
+   * as deliberate at this size, because the field is a *surface* rather than an outline.
+   *
+   * Three pieces of the anatomy do the work and all three were missing:
+   *
+   * The surface itself, a container role rather than a border, so the field sits in the
+   * elevation order of the bar around it instead of being drawn on top of it.
+   *
+   * The activation indicator - a line along the bottom edge that thickens and takes the
+   * primary role on focus. Material's filled field is identified by that line, and a focus
+   * ring alone is the browser default rather than a design.
+   *
+   * A hover state layer, at the specified 0.08. Its absence is why the field felt inert:
+   * everything else in this bar answers the pointer and this did not.
+   *
+   * The one deliberate departure from the specification: Material's filled field has square
+   * bottom corners, because it normally sits in a form on a flat page. This one sits inside
+   * a fully rounded toolbar, where square corners read as a fragment of a different
+   * interface, so it takes the small shape on all four. The activation indicator is inset to
+   * match, which keeps the line reading as part of the field rather than as an underline
+   * that has escaped it.
+   */
   .number-input {
     pointer-events: auto;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
 
     display: flex;
     align-items: center;
@@ -47,18 +73,58 @@ export default {
     height: 100%;
     min-height: 2em;
 
-    background-color: var(--md-sys-color-surface-container-lowest);
+    background-color: var(--md-sys-color-surface-container-highest);
     color: var(--md-sys-color-on-surface);
-    border: 1px solid var(--md-sys-color-outline);
-    border-radius: $md-shape-xs;
+    border: none;
+    border-radius: $md-shape-s;
 
-    transition: border-color $md-duration-short $md-easing-standard,
-      border-width $md-duration-short $md-easing-standard;
+    transition: background-color $md-duration-short $md-easing-standard;
 
-    &:focus-within {
-      border-width: 2px;
-      border-color: var(--md-sys-color-primary);
-      padding: 0; // border growth is absorbed by box-sizing, not by padding
+    // The state layer. An overlay of the foreground colour rather than a second colour
+    // chosen by hand, so it can never drift from the field's own palette.
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-color: var(--md-sys-color-on-surface);
+      opacity: 0;
+      transition: opacity $md-duration-short $md-easing-standard;
+      pointer-events: none;
+    }
+
+    &:hover::before {
+      opacity: $md-state-hover;
+    }
+
+    // The activation indicator: what identifies a filled field. At rest it is a hairline in
+    // the outline role; on focus it thickens and takes primary, which is the whole signal.
+    &::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      bottom: 0;
+      height: 1px;
+      background-color: var(--md-sys-color-outline);
+      transition: height $md-duration-short $md-easing-standard,
+        background-color $md-duration-short $md-easing-standard;
+      pointer-events: none;
+    }
+
+    &:focus-within::after {
+      height: 2px;
+      background-color: var(--md-sys-color-primary);
+    }
+
+    &:focus-within::before {
+      opacity: $md-state-focus;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      &, &::before, &::after {
+        transition: none;
+      }
     }
 
     label {
@@ -69,6 +135,10 @@ export default {
       cursor: text;
     }
 
+    // The designator, in place of a floating label. A compact field inside a toolbar has no
+    // room for one, and Material's guidance is that a field must be identified either way -
+    // so the "x"/"z" is a permanent leading label in label-medium on the supporting-text
+    // role, which is what a floating label settles into anyway.
     .label {
       display: inline-flex;
       align-items: center;
