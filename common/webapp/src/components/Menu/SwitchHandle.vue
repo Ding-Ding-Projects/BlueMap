@@ -1,5 +1,5 @@
 <template>
-  <div class="switch" :class="{on: on}"></div>
+  <div class="switch" :class="{on: on}" role="switch" :aria-checked="on.toString()"></div>
 </template>
 
 <script>
@@ -12,36 +12,107 @@ export default {
 </script>
 
 <style lang="scss">
+@import "/src/scss/variables.scss";
+
+// M3 switch: 52x32 track, $md-shape-full, 16px unselected / 24px selected handle
+// that grows to 28px while pressed, with a 40px state-layer halo.
 .side-menu .switch {
-  height: 1em;
-  width: 2em;
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
 
-  border-radius: 1em;
-  background-color: var(--theme-bg-light);
+  width: 52px;
+  height: 32px;
 
-  transition: background-color 0.3s;
+  border-radius: $md-shape-full;
+  border: solid 2px var(--md-sys-color-outline);
+  background-color: var(--md-sys-color-surface-container-highest);
 
+  transition: background-color $md-duration-short $md-easing-standard,
+              border-color $md-duration-short $md-easing-standard;
+
+  flex-shrink: 0;
+
+  // handle
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--md-sys-color-outline);
+    transform: translate(0, -50%);
+
+    transition: left $md-duration-short $md-easing-standard,
+                width $md-duration-short $md-easing-standard,
+                height $md-duration-short $md-easing-standard,
+                background-color $md-duration-short $md-easing-standard;
+  }
+
+  // state-layer halo behind the handle
   &::after {
     content: "";
-    display: block;
-    width: 0.75em;
-    height: 0.75em;
-    border-radius: 100%;
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: currentColor;
+    color: var(--md-sys-color-outline);
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
 
-    background-color: var(--theme-bg);
-
-    position: relative;
-    top: 0.125em;
-    left: 0.125em;
-
-    transition: left 0.3s;
+    transition: left $md-duration-short $md-easing-standard,
+                opacity $md-duration-short $md-easing-standard,
+                color $md-duration-short $md-easing-standard;
   }
 
   &.on {
-    background-color: var(--theme-switch-button-on);
+    border-color: transparent;
+    background-color: var(--md-sys-color-primary);
+
+    &::before {
+      left: 24px;
+      width: 24px;
+      height: 24px;
+      background-color: var(--md-sys-color-on-primary);
+    }
 
     &::after {
-      left: 1.125em;
+      left: 36px;
+      color: var(--md-sys-color-primary);
+    }
+  }
+
+  &:hover::after {
+    opacity: $md-state-hover;
+  }
+
+  &:focus-visible::after,
+  &:active::after {
+    opacity: $md-state-pressed;
+  }
+
+  &:active::before {
+    width: 28px;
+    height: 28px;
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &::before,
+    &::after {
+      transition: none;
     }
   }
 }

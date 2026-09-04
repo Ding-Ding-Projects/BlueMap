@@ -1,6 +1,8 @@
 <template>
   <div class="marker-item" :class="{'marker-hidden': !marker.visible}">
-    <div class="marker-button" :title="marker.id" @click="click(false)">
+    <div class="marker-button" :title="marker.id" @click="click(false)"
+         role="button" tabindex="0"
+         @keydown.enter.prevent="click(false)" @keydown.space.prevent="click(false)">
       <div class="icon" v-if="marker.type === 'player'">
         <img :src="'maps/' + mapId +  '/assets/playerheads/' + marker.playerUuid + '.png'" alt="playerhead" @error="steve">
       </div>
@@ -17,7 +19,9 @@
       </div>
     </div>
     <div class="follow-player-button" :class="{active: controls.controls.followingPlayer && controls.controls.followingPlayer.id === marker.id}"
-         v-if="marker.type === 'player'" @click="click(true)" :title="$t('markers.followPlayerTitle')">
+         v-if="marker.type === 'player'" @click="click(true)" :title="$t('markers.followPlayerTitle')"
+         role="button" tabindex="0" :aria-label="$t('markers.followPlayerTitle')"
+         @keydown.enter.prevent="click(true)" @keydown.space.prevent="click(true)">
       <svg viewBox="0 0 30 30">
         <circle fill="none" stroke-width="3" stroke-miterlimit="10" cx="15" cy="15" r="10.375"/>
         <line fill="none" stroke-width="3" stroke-miterlimit="10" x1="3.25" y1="15" x2="1.063" y2="15"/>
@@ -104,13 +108,15 @@ export default {
 @import "/src/scss/variables.scss";
 
 .side-menu .marker-item {
+  position: relative;
   display: flex;
   white-space: nowrap;
   user-select: none;
 
-  line-height: 1em;
+  border-radius: $md-shape-xs;
+  overflow: hidden;
 
-  margin: 0.5em 0;
+  margin: 0.25em 0;
 
   &:first-child {
     margin-top: 0;
@@ -126,34 +132,73 @@ export default {
   }
 
   .marker-button {
+    position: relative;
     display: flex;
+    align-items: center;
     flex-grow: 1;
+    min-height: $md-touch-target;
     cursor: pointer;
 
-    &:hover {
-      background-color: var(--theme-bg-hover);
+    transition: background-color $md-duration-short $md-easing-standard;
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $md-duration-short $md-easing-standard;
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+    }
+
+    &:hover::before {
+      opacity: $md-state-hover;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: -3px;
+      z-index: 1;
+    }
+    &:focus-visible::before {
+      opacity: $md-state-focus;
+    }
+
+    &:active::before {
+      opacity: $md-state-pressed;
     }
 
     > .info {
       flex-grow: 1;
       text-overflow: ellipsis;
 
-      padding: 0.5em;
+      padding: 0.5em 1em;
 
       .label {
+        font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line);
+        color: var(--md-sys-color-on-surface);
         text-overflow: ellipsis;
+        overflow: hidden;
       }
 
       .stats {
         display: flex;
-        font-size: 0.8em;
-        color: var(--theme-fg-light);
+        font-size: var(--md-sys-typescale-body-medium-size);
+    line-height: var(--md-sys-typescale-body-medium-line);
+        color: var(--md-sys-color-on-surface-variant);
 
         > div {
           &:not(:first-child) {
             margin-left: 0.5em;
             padding-left: 0.5em;
-            border-left: solid 1px var(--theme-bg-hover);
+            border-left: solid 1px var(--md-sys-color-outline-variant);
           }
         }
       }
@@ -161,41 +206,76 @@ export default {
 
     > .icon {
       height: 2.5em;
-      margin: 0.5em;
+      margin: 0.5em 0 0.5em 0.5em;
       flex-shrink: 0;
 
       img {
         image-rendering: pixelated;
         height: 100%;
+        border-radius: $md-shape-full;
       }
     }
   }
 
   > .follow-player-button {
-    width: 2em;
+    position: relative;
+    width: $md-touch-target;
+    min-height: $md-touch-target;
     cursor: pointer;
-    background-color: var(--theme-bg);
+    background-color: transparent;
 
-    &:hover, &.active {
-      background-color: var(--theme-bg-light);
+    transition: background-color $md-duration-short $md-easing-standard;
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $md-duration-short $md-easing-standard;
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+    }
+
+    &:hover::before {
+      opacity: $md-state-hover;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: -3px;
+      z-index: 1;
+    }
+    &:focus-visible::before {
+      opacity: $md-state-focus;
+    }
+
+    &.active {
+      background-color: var(--md-sys-color-secondary-container);
+
+      > svg {
+        fill: var(--md-sys-color-on-secondary-container);
+        stroke: var(--md-sys-color-on-secondary-container);
+      }
     }
 
     > svg {
       position: relative;
-      fill: var(--theme-fg-light);
-      stroke: var(--theme-fg-light);
+      fill: var(--md-sys-color-on-surface-variant);
+      stroke: var(--md-sys-color-on-surface-variant);
 
       top: 50%;
       transform: translate(0, -50%) scale(0.75);
     }
 
     &:active {
-      background-color: var(--theme-fg-light);
-      color: var(--theme-bg);
-
-      > svg {
-        fill: var(--theme-bg-light);
-        stroke: var(--theme-bg-light);
+      &::before {
+        opacity: $md-state-pressed;
       }
     }
   }

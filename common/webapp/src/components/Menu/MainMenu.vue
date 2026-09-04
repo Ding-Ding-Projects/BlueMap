@@ -61,8 +61,12 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../../scss/variables.scss";
+
 .info-content {
-  font-size: 0.8em;
+  font-size: var(--md-sys-typescale-body-medium-size);
+    line-height: var(--md-sys-typescale-body-medium-line);
+  color: var(--md-sys-color-on-surface);
 
   table {
     border-collapse: collapse;
@@ -70,19 +74,21 @@ export default {
 
     tr {
       th, td {
-        padding: 0.2em 0.5em;
-        border: solid 1px var(--theme-bg-light);
+        padding: 0.4em 0.5em;
+        border: solid 1px var(--md-sys-color-outline-variant);
       }
 
       th {
         font-weight: inherit;
         text-align: inherit;
+        color: var(--md-sys-color-on-surface-variant);
       }
     }
   }
 
   .info-footer {
     text-align: center;
+    color: var(--md-sys-color-on-surface-variant);
   }
 }
 </style>

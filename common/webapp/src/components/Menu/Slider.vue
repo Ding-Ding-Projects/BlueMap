@@ -32,12 +32,22 @@ export default {
 </script>
 
 <style lang="scss">
+@import "/src/scss/variables.scss";
+
+// M3 slider: 4px inactive/active track ($md-shape-full), 20x20 round handle in
+// primary with a 40px state-layer halo. The active-track fill (the portion left
+// of the handle) is approximated with a background gradient, since a plain
+// range input has no DOM hook to size a separate "active" track element.
 .side-menu .slider {
   line-height: 2em;
   padding: 0 0.5em;
+  min-height: $md-touch-target;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   &:hover {
-    background-color: var(--theme-bg-hover);
+    background-color: var(--md-sys-color-surface-container-high);
   }
 
   > .label {
@@ -47,6 +57,8 @@ export default {
   }
 
   > label {
+    display: block;
+
     > input {
       appearance: none;
       -moz-appearance: none;
@@ -54,13 +66,14 @@ export default {
       outline: none;
 
       width: 100%;
-      height: 1em;
+      height: 4px;
+      margin: 22px 0;
 
-      border-radius: 1em;
-      //border: solid 0.125em var(--theme-fg-light);
+      border-radius: $md-shape-full;
+      overflow: visible;
+      background-color: var(--md-sys-color-surface-container-highest);
 
-      overflow: hidden;
-      background-color: var(--theme-bg-light);
+      transition: background-color $md-duration-short $md-easing-standard;
 
       &::-webkit-slider-thumb {
         appearance: none;
@@ -68,25 +81,79 @@ export default {
         -webkit-appearance: none;
         outline: none;
 
-        width: 1em;
-        height: 1em;
+        width: 20px;
+        height: 20px;
+        margin-top: 0;
 
-        border-radius: 1em;
-        border: solid 0.125em var(--theme-bg-light);
+        border-radius: 50%;
+        border: none;
 
-        background-color: var(--theme-bg);
+        background-color: var(--md-sys-color-primary);
+        box-shadow: 0 0 0 0 transparent;
 
-        //box-shadow: calc(-100vw - 0.375em) 0 0 100vw var(--theme-switch-button-on);
+        cursor: pointer;
+
+        transition: box-shadow $md-duration-short $md-easing-standard;
       }
 
       &::-moz-range-thumb {
-        width: 0.75em;
-        height: 0.75em;
+        width: 20px;
+        height: 20px;
 
-        border-radius: 0.75em;
-        border: solid 0.125em var(--theme-bg-light);
+        border-radius: 50%;
+        border: none;
 
-        background-color: var(--theme-bg);
+        background-color: var(--md-sys-color-primary);
+        box-shadow: 0 0 0 0 transparent;
+
+        cursor: pointer;
+
+        transition: box-shadow $md-duration-short $md-easing-standard;
+      }
+
+      &::-moz-range-progress {
+        background-color: var(--md-sys-color-primary);
+        border-radius: $md-shape-full;
+        height: 4px;
+      }
+
+      &::-moz-range-track {
+        background-color: var(--md-sys-color-surface-container-highest);
+        border-radius: $md-shape-full;
+        height: 4px;
+      }
+
+      &:hover,
+      &:focus-visible {
+        &::-webkit-slider-thumb {
+          box-shadow: 0 0 0 10px color-mix(in srgb, var(--md-sys-color-primary) #{$md-state-hover * 100%}, transparent);
+        }
+        &::-moz-range-thumb {
+          box-shadow: 0 0 0 10px color-mix(in srgb, var(--md-sys-color-primary) #{$md-state-hover * 100%}, transparent);
+        }
+      }
+
+      &:active {
+        &::-webkit-slider-thumb {
+          box-shadow: 0 0 0 10px color-mix(in srgb, var(--md-sys-color-primary) #{$md-state-pressed * 100%}, transparent);
+        }
+        &::-moz-range-thumb {
+          box-shadow: 0 0 0 10px color-mix(in srgb, var(--md-sys-color-primary) #{$md-state-pressed * 100%}, transparent);
+        }
+      }
+
+      &:focus-visible {
+        outline: 3px solid var(--md-sys-color-primary);
+        outline-offset: 2px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+
+        &::-webkit-slider-thumb,
+        &::-moz-range-thumb {
+          transition: none;
+        }
       }
     }
   }

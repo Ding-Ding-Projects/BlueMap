@@ -37,6 +37,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import "/src/scss/variables.scss";
+
   @import "./scss/global.scss";
 
   #map-container {
@@ -54,7 +56,14 @@ export default {
 
     pointer-events: none;
 
+    // M3 surface background / on-surface text and the body-large type role,
+    // established once at the shell root so every descendant inherits it.
+    background-color: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+
     font-size: 1rem;
+    line-height: var(--md-sys-typescale-body-large-line);
+    letter-spacing: var(--md-sys-typescale-body-large-tracking);
     @media (max-width: $mobile-break) {
       font-size: 1.5rem;
     }
@@ -64,7 +73,7 @@ export default {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      color: var(--theme-fg-light);
+      color: var(--md-sys-color-on-surface-variant);
       line-height: 1em;
       text-align: center;
     }

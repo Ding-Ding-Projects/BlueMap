@@ -1,5 +1,5 @@
 <template>
-  <SvgButton class="compass" @action="action">
+  <SvgButton class="compass" :title="title" @action="action">
     <svg viewBox="0 0 30 30" :style="style">
       <path class="north" d="M14.792,1.04c0.114-0.354,0.299-0.354,0.412,0l4.089,12.729c0.114,0.353-0.097,0.642-0.468,0.642
         l-7.651,0.001c-0.371,0-0.581-0.288-0.468-0.642L14.792,1.04z"/>
@@ -18,6 +18,9 @@
   export default {
     name: "Compass",
     components: {SvgButton},
+    props: {
+      title: String,
+    },
     data() {
       return {
         controls: this.$bluemap.mapViewer.controlsManager.data
@@ -44,27 +47,43 @@
 </script>
 
 <style lang="scss">
+  @import "/src/scss/variables.scss";
+
+  // The compass is an illustration/indicator, not a plain icon button: its
+  // needle is positioned absolutely so it can be rotated independently of the
+  // button's own layout. Anatomy-wise it still gets the M3 icon-button surface
+  // (via SvgButton) plus shape/elevation; the two-tone needle fill below is
+  // chrome styling (a north/south split for legibility), not a data encoding,
+  // so it is mapped onto on-surface roles like any other icon colour.
   .compass {
+    overflow: visible;
+
     svg {
-      height: 1.8em;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24px;
+      height: 24px;
 
       .north {
-        fill: var(--theme-fg);
+        fill: var(--md-sys-color-on-surface);
       }
 
       .south {
-        fill: var(--theme-fg-light);
+        fill: var(--md-sys-color-on-surface-variant);
       }
     }
 
+    &.active,
     &:active {
       svg {
         .north {
-          fill: var(--theme-bg);
+          fill: var(--md-sys-color-on-primary-container);
         }
 
         .south {
-          fill: var(--theme-bg-light);
+          fill: var(--md-sys-color-on-primary-container);
+          opacity: 0.7;
         }
       }
     }

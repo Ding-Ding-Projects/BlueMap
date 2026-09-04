@@ -17,13 +17,17 @@ export default {
 </script>
 
 <style lang="scss">
+@import "/src/scss/variables.scss";
+
 
 .side-menu .switch-button {
   cursor: pointer;
   user-select: none;
   display: flex;
+  align-items: center;
   line-height: 2em;
 
+  min-height: $md-touch-target;
   padding: 0 0.5em;
 
   > .label {
@@ -39,7 +43,7 @@ export default {
   }
 
   &:hover {
-    background-color: var(--theme-bg-hover);
+    background-color: var(--md-sys-color-surface-container-high);
   }
 }
 

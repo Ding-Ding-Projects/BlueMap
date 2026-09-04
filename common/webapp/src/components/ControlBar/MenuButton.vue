@@ -1,5 +1,5 @@
 <template>
-  <SvgButton class="menu-button" :class="{close: close, back: back}">
+  <SvgButton class="menu-button" :class="{close: close, back: back}" :title="title" @action="$emit('action', $event)">
     <svg viewBox="0 0 30 30">
       <g>
         <path d="M25.004,9.294c0,0.806-0.75,1.46-1.676,1.46H6.671c-0.925,0-1.674-0.654-1.674-1.46l0,0
@@ -21,20 +21,23 @@ export default {
   props: {
     close: Boolean,
     back: Boolean,
+    title: String,
   }
 }
 </script>
 
 <style lang="scss">
+  @import "/src/scss/variables.scss";
+
   .menu-button {
 
     svg {
       g {
         transform-origin: center;
-        transition: transform 0.3s;
+        transition: transform $md-duration-long $md-easing-standard;
       }
       path {
-        transition: transform 0.3s, fill 0.3s;
+        transition: transform $md-duration-long $md-easing-standard, fill $md-duration-short $md-easing-standard;
         transform: translate(0, 0) rotate(0);
 
         &:nth-child(1) {
@@ -79,6 +82,13 @@ export default {
             transform: translate(0, -10px) rotate(-30deg);
           }
         }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      svg g,
+      svg path {
+        transition: none;
       }
     }
   }

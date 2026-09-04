@@ -131,18 +131,29 @@
 <style lang="scss">
 @import "/src/scss/variables.scss";
 
+  // The bar is an M3 elevated surface (surface-container + elevation-2) with
+  // rounded, floating button-group clusters, rather than one flat undifferentiated
+  // strip. Individual controls keep their own 48px touch targets (SvgButton);
+  // this level only supplies the bar's own chrome and inter-group dividers.
   .control-bar {
     position: fixed;
     top: 0;
     left: 0;
 
     display: flex;
+    align-items: center;
+    gap: 4px;
 
-    filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.53));
-    height: 2em;
+    background-color: var(--md-sys-color-surface-container);
+    box-shadow: var(--md-sys-elevation-2);
+    border-radius: $md-shape-l;
+
+    min-height: $md-touch-target;
 
     margin: 0.5em;
     width: calc(100% - 1em);
+    padding: 4px;
+    box-sizing: border-box;
 
     .pos-input {
       max-width: 20em;
@@ -150,7 +161,7 @@
     }
 
     > :not(:first-child) {
-      border-left: solid 1px var(--theme-bg-light);
+      border-left: solid 1px var(--md-sys-color-outline-variant);
     }
 
     .space {
@@ -169,8 +180,9 @@
     @media (max-width: $mobile-break) {
       margin: 0;
       width: 100%;
+      border-radius: 0;
 
-      background-color: var(--theme-bg);
+      background-color: var(--md-sys-color-surface-container);
 
       .pos-input {
         max-width: unset;

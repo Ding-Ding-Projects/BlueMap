@@ -1,6 +1,8 @@
 <template>
   <div class="marker-set" :title="markerSet.id">
-    <div class="info" @click="toggle">
+    <div class="info" @click="toggle"
+         role="button" tabindex="0" :aria-pressed="markerSet.toggleable ? markerSet.visible : undefined"
+         @keydown.enter.prevent="toggle" @keydown.space.prevent="toggle">
       <div class="marker-set-switch">
         <div class="label">{{ label }}</div>
         <SwitchHandle :on="markerSet.visible" v-if="markerSet.toggleable"/>
@@ -18,7 +20,9 @@
     </div>
     <div class="open-menu-button"
          :class="{active: active}"
-         @click="more($event)">
+         :role="active ? 'button' : undefined" :tabindex="active ? 0 : undefined"
+         @click="more($event)"
+         @keydown.enter.prevent="more($event)" @keydown.space.prevent="more($event)">
       <svg viewBox="0 0 30 30">
         <path d="M25.004,9.294c0,0.806-0.75,1.46-1.676,1.46H6.671c-0.925,0-1.674-0.654-1.674-1.46l0,0
 	c0-0.807,0.749-1.461,1.674-1.461h16.657C24.254,7.833,25.004,8.487,25.004,9.294L25.004,9.294z"/>
@@ -85,13 +89,17 @@ export default {
 </script>
 
 <style lang="scss">
+@import "../../scss/variables.scss";
+
 .side-menu .marker-set {
+  position: relative;
   display: flex;
   user-select: none;
 
-  line-height: 1em;
+  border-radius: $md-shape-xs;
+  overflow: hidden;
 
-  margin: 0.5em 0;
+  margin: 0.25em 0;
 
   &:first-child {
     margin-top: 0;
@@ -102,17 +110,57 @@ export default {
   }
 
   > .info {
+    position: relative;
     flex-grow: 1;
     cursor: pointer;
+    min-height: $md-touch-target;
+    display: flex;
+    align-items: center;
 
-    padding: 0.5em;
+    padding: 0.5em 1em;
 
-    &:hover {
-      background-color: var(--theme-bg-hover);
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line);
+    color: var(--md-sys-color-on-surface);
+
+    transition: background-color $md-duration-short $md-easing-standard;
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $md-duration-short $md-easing-standard;
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+    }
+
+    &:hover::before {
+      opacity: $md-state-hover;
+    }
+
+    &:focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: -3px;
+      z-index: 1;
+    }
+    &:focus-visible::before {
+      opacity: $md-state-focus;
+    }
+
+    &:active::before {
+      opacity: $md-state-pressed;
     }
 
     > .marker-set-switch {
       position: relative;
+      width: 100%;
 
       .label {
         margin: 0 2.5em 0 0;
@@ -120,39 +168,70 @@ export default {
 
       > .switch {
         position: absolute;
-        top: 0;
+        top: 50%;
         right: 0;
+        transform: translateY(-50%);
       }
     }
 
     > .stats {
       display: flex;
-      font-size: 0.8em;
-      color: var(--theme-fg-light);
+      font-size: var(--md-sys-typescale-body-medium-size);
+    line-height: var(--md-sys-typescale-body-medium-line);
+      color: var(--md-sys-color-on-surface-variant);
 
       > div {
         &:not(:first-child) {
           margin-left: 0.5em;
           padding-left: 0.5em;
-          border-left: solid 1px var(--theme-bg-light);
+          border-left: solid 1px var(--md-sys-color-outline-variant);
         }
       }
     }
   }
 
   > .open-menu-button {
-    width: 2em;
+    position: relative;
+    width: $md-touch-target;
+    min-height: $md-touch-target;
 
     &.active {
       cursor: pointer;
 
-      &:hover {
-        background-color: var(--theme-bg-hover);
+      transition: background-color $md-duration-short $md-easing-standard;
+      @media (prefers-reduced-motion: reduce) {
+        transition: none;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-color: currentColor;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity $md-duration-short $md-easing-standard;
+        @media (prefers-reduced-motion: reduce) {
+          transition: none;
+        }
+      }
+
+      &:hover::before {
+        opacity: $md-state-hover;
+      }
+
+      &:focus-visible {
+        outline: 3px solid var(--md-sys-color-primary);
+        outline-offset: -3px;
+        z-index: 1;
+      }
+      &:focus-visible::before {
+        opacity: $md-state-focus;
       }
 
       > svg {
         position: relative;
-        fill: var(--theme-fg-light);
+        fill: var(--md-sys-color-on-surface-variant);
 
         top: 50%;
         transform: translate(0, -50%) scale(0.75);
@@ -168,13 +247,8 @@ export default {
         }
       }
 
-      &:active {
-        background-color: var(--theme-fg-light);
-        color: var(--theme-bg);
-
-        > svg {
-          fill: var(--theme-bg-light);
-        }
+      &:active::before {
+        opacity: $md-state-pressed;
       }
     }
 

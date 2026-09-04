@@ -1,5 +1,5 @@
 <template>
-  <SvgButton class="day-night-switch" :active="!isDay" @action="action">
+  <SvgButton class="day-night-switch" toggle :active="!isDay" :title="title" @action="action">
     <svg viewBox="0 0 30 30">
       <path d="M17.011,19.722c-3.778-1.613-5.533-5.982-3.921-9.76c0.576-1.348,1.505-2.432,2.631-3.204
         c-3.418-0.243-6.765,1.664-8.186,4.992c-1.792,4.197,0.159,9.053,4.356,10.844c3.504,1.496,7.462,0.377,9.717-2.476
@@ -21,6 +21,9 @@ let animation;
 export default {
     name: "DayNightSwitch",
   components: {SvgButton},
+  props: {
+    title: String,
+  },
   data() {
       return {
         mapViewer: this.$bluemap.mapViewer.data
@@ -51,6 +54,13 @@ export default {
 </script>
 
 <style lang="scss">
+  @import "/src/scss/variables.scss";
+
+  // The sun/moon + stars illustration encodes the day/night state itself, so
+  // its drawing colours (--theme-moon-day/night, --theme-stars-day/night from
+  // variables.scss) are left as-is: they are the data being displayed, not
+  // button chrome. Only the M3 selected/pressed surface (from SvgButton's
+  // .active rule) is chrome here.
   .day-night-switch {
     svg {
       fill: var(--theme-moon-day);
@@ -59,6 +69,7 @@ export default {
       }
     }
 
+    &.active,
     &:active {
       svg {
         fill: var(--theme-moon-night);

@@ -26,14 +26,73 @@ export default {
 </script>
 
 <style lang="scss">
+@import "/src/scss/variables.scss";
 
+// M3 list item.
+//
+// Upstream swapped the row's background colour on hover, and on press inverted the
+// foreground and background outright - a flash of reversed colour that reads as a
+// rendering fault rather than a press. M3 uses a state layer instead: one tinted
+// overlay of the row's own text colour, at a spec opacity, over an unchanged
+// background. The row keeps its colours and simply gains emphasis.
 .side-menu .simple-button {
+  position: relative;
   cursor: pointer;
   user-select: none;
   display: flex;
-  line-height: 2em;
+  align-items: center;
+  gap: 12px;
 
-  padding: 0 0.5em;
+  // 48px is the M3 minimum target and the minimum anything on a touch screen may
+  // be. The old `line-height: 2em` produced a 32px row.
+  min-height: $md-touch-target;
+  padding: 0 16px;
+  border-radius: $md-shape-s;
+
+  color: var(--md-sys-color-on-surface);
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line);
+  letter-spacing: var(--md-sys-typescale-body-large-tracking);
+
+  // The state layer. `currentColor` means it tints correctly in every theme
+  // without a per-theme hover colour needing to exist at all.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-color: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity $md-duration-short $md-easing-standard;
+  }
+
+  &:hover::before {
+    opacity: $md-state-hover;
+  }
+
+  &:focus-visible::before {
+    opacity: $md-state-focus;
+  }
+
+  &:active::before {
+    opacity: $md-state-pressed;
+  }
+
+  // Focus must be visible on its own, not merely a slightly stronger hover: a
+  // keyboard user has no pointer to tell them where they are.
+  &:focus-visible {
+    outline: 3px solid var(--md-sys-color-primary);
+    outline-offset: 2px;
+  }
+
+  // Selected, in M3, is a container role rather than a grey wash - and it carries
+  // a colour *and* a weight change, so it is not signalled by colour alone.
+  &.active {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+    font-weight: 500;
+  }
 
   > .label {
     flex-grow: 1;
@@ -43,24 +102,17 @@ export default {
     text-overflow: ellipsis;
   }
 
-  &:hover {
-    background-color: var(--theme-bg-hover);
-  }
-
-  &.active {
-    background-color: var(--theme-bg-light);
-  }
-
   > .submenu-icon {
-    width: 2em;
-    height: 2em;
+    width: 24px;
+    height: 24px;
 
     flex-shrink: 0;
-
-    margin-right: -0.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     > svg {
-      fill: var(--theme-fg-light);
+      fill: var(--md-sys-color-on-surface-variant);
 
       path:nth-child(1) {
         transform-origin: 15px 9px;
@@ -75,15 +127,14 @@ export default {
     }
   }
 
-  &:active {
-    background-color: var(--theme-fg-light);
-    color: var(--theme-bg);
+  &.active > .submenu-icon > svg {
+    fill: var(--md-sys-color-on-secondary-container);
+  }
 
-
-    > .submenu-icon > svg {
-      fill: var(--theme-bg-light);
+  @media (prefers-reduced-motion: reduce) {
+    &::before {
+      transition: none;
     }
   }
 }
-
 </style>

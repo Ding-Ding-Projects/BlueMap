@@ -23,69 +23,244 @@
  * THE SOFTWARE.
  */
 
+// ---------------------------------------------------------------------------
+// Material Design 3 token layer.
+//
+// Upstream shipped five ad-hoc custom properties (--theme-bg, --theme-fg and
+// friends). Those cannot express a design system: there is no notion of a
+// container versus a surface, no state layers, no elevation, no shape scale and
+// no type roles, so every component invented its own spacing and its own idea
+// of what "hover" looks like.
+//
+// This replaces them with the real M3 system token set. The legacy names are
+// kept at the bottom, mapped onto M3 roles, so a component that has not been
+// converted yet still renders in the new palette rather than losing its colours
+// entirely.
+//
+// The colour values are a tonal palette built from a blue seed, which keeps the
+// product's own identity. The rendered map is data, not chrome, and is
+// untouched by any of this.
+// ---------------------------------------------------------------------------
+
 // responsive breaks
 $mobile-break: 575.98px;
 
-// themes
-@mixin dark-theme {
-  font-family: 'Quicksand', sans-serif;
-  font-size: 16px;
+// Shape scale. M3 expresses a corner radius as a role, not a per-component guess.
+$md-shape-none: 0;
+$md-shape-xs: 4px;
+$md-shape-s: 8px;
+$md-shape-m: 12px;
+$md-shape-l: 16px;
+$md-shape-xl: 28px;
+$md-shape-full: 9999px;
+
+// State-layer opacities, from the M3 spec. A state layer is a tinted overlay at
+// these exact opacities over the element's own colour; it is not a different
+// background colour, which is what upstream's --theme-bg-hover was doing.
+$md-state-hover: 0.08;
+$md-state-focus: 0.1;
+$md-state-pressed: 0.1;
+$md-state-dragged: 0.16;
+
+// Motion. One easing curve and three durations, so nothing invents its own.
+$md-easing-standard: cubic-bezier(0.2, 0, 0, 1);
+$md-duration-short: 100ms;
+$md-duration-medium: 200ms;
+$md-duration-long: 400ms;
+
+// Minimum touch target. Every interactive element honours this even where its
+// painted box is deliberately smaller.
+$md-touch-target: 48px;
+
+@mixin md-typography {
+  // The type scale and its roles are M3. The family stays the bundled Quicksand:
+  // M3's own Roboto is not vendored in this repository, and fetching a font from
+  // a CDN is not allowed, so shipping the M3 scale with the font already present
+  // is the closest honest equivalent. Stated here rather than left to be noticed.
+  font-family: "Quicksand", system-ui, sans-serif;
+
+  --md-sys-typescale-headline-small-size: 24px;
+  --md-sys-typescale-headline-small-line: 32px;
+  --md-sys-typescale-title-large-size: 22px;
+  --md-sys-typescale-title-large-line: 28px;
+  --md-sys-typescale-title-medium-size: 16px;
+  --md-sys-typescale-title-medium-line: 24px;
+  --md-sys-typescale-title-medium-weight: 500;
+  --md-sys-typescale-title-medium-tracking: 0.15px;
+  --md-sys-typescale-body-large-size: 16px;
+  --md-sys-typescale-body-large-line: 24px;
+  --md-sys-typescale-body-large-tracking: 0.5px;
+  --md-sys-typescale-body-medium-size: 14px;
+  --md-sys-typescale-body-medium-line: 20px;
+  --md-sys-typescale-body-medium-tracking: 0.25px;
+  --md-sys-typescale-label-large-size: 14px;
+  --md-sys-typescale-label-large-line: 20px;
+  --md-sys-typescale-label-large-weight: 500;
+  --md-sys-typescale-label-large-tracking: 0.1px;
+  --md-sys-typescale-label-medium-size: 12px;
+  --md-sys-typescale-label-medium-line: 16px;
+  --md-sys-typescale-label-medium-weight: 500;
+  --md-sys-typescale-label-medium-tracking: 0.5px;
+
+  font-size: var(--md-sys-typescale-body-large-size);
+  line-height: var(--md-sys-typescale-body-large-line);
   font-weight: 400;
+}
 
-  --theme-bg: #181818;
-  --theme-bg-hover: #222;
-  --theme-bg-light: #444;
-  --theme-fg: #fff;
-  --theme-fg-light: #aaa;
+@mixin md-elevation {
+  // Level 0 is `none` rather than a zero-blur shadow, so a surface returning to
+  // rest genuinely has no shadow instead of an invisible one that still paints.
+  --md-sys-elevation-0: none;
+  --md-sys-elevation-1:
+    0 1px 2px 0 rgb(0 0 0 / 0.3),
+    0 1px 3px 1px rgb(0 0 0 / 0.15);
+  --md-sys-elevation-2:
+    0 1px 2px 0 rgb(0 0 0 / 0.3),
+    0 2px 6px 2px rgb(0 0 0 / 0.15);
+  --md-sys-elevation-3:
+    0 4px 8px 3px rgb(0 0 0 / 0.15),
+    0 1px 3px 0 rgb(0 0 0 / 0.3);
+  --md-sys-elevation-4:
+    0 6px 10px 4px rgb(0 0 0 / 0.15),
+    0 2px 3px 0 rgb(0 0 0 / 0.3);
+  --md-sys-elevation-5:
+    0 8px 12px 6px rgb(0 0 0 / 0.15),
+    0 4px 4px 0 rgb(0 0 0 / 0.3);
+}
 
-  //SwitchButton
-  --theme-switch-button-on: #00489d;
-
-  //DayNightSwitch
-  --theme-stars-day: #fff;
-  --theme-moon-day: #ff0;
-  --theme-stars-night: #444;
-  --theme-moon-night: #000;
+// Maps the legacy upstream names onto M3 roles.
+//
+// Kept deliberately: a component that has not been converted yet keeps rendering
+// in the new palette rather than losing its colours entirely. Remove a mapping
+// only once nothing reads it.
+@mixin md-legacy-aliases {
+  --theme-bg: var(--md-sys-color-surface);
+  --theme-bg-hover: var(--md-sys-color-surface-container-high);
+  --theme-bg-light: var(--md-sys-color-outline-variant);
+  --theme-fg: var(--md-sys-color-on-surface);
+  --theme-fg-light: var(--md-sys-color-on-surface-variant);
+  --theme-switch-button-on: var(--md-sys-color-primary);
 }
 
 @mixin light-theme {
-  font-family: 'Quicksand', sans-serif;
-  font-size: 16px;
-  font-weight: 500;
+  @include md-typography;
+  @include md-elevation;
 
-  --theme-bg: #eee;
-  --theme-bg-hover: #ddd;
-  --theme-bg-light: #999;
-  --theme-fg: #000;
-  --theme-fg-light: #333;
+  --md-sys-color-primary: #1a5ba8;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #d5e3ff;
+  --md-sys-color-on-primary-container: #001b3c;
+  --md-sys-color-secondary: #555f71;
+  --md-sys-color-on-secondary: #ffffff;
+  --md-sys-color-secondary-container: #d9e3f8;
+  --md-sys-color-on-secondary-container: #121c2b;
+  --md-sys-color-tertiary: #3c6939;
+  --md-sys-color-on-tertiary: #ffffff;
+  --md-sys-color-tertiary-container: #bdf0b4;
+  --md-sys-color-on-tertiary-container: #002203;
+  --md-sys-color-error: #ba1a1a;
+  --md-sys-color-on-error: #ffffff;
+  --md-sys-color-error-container: #ffdad6;
+  --md-sys-color-on-error-container: #410002;
 
-  //SwitchButton
-  --theme-switch-button-on: #6593dc;
+  --md-sys-color-surface: #faf9fd;
+  --md-sys-color-on-surface: #1a1c1e;
+  --md-sys-color-surface-variant: #dfe2eb;
+  --md-sys-color-on-surface-variant: #43474e;
+  --md-sys-color-surface-container-lowest: #ffffff;
+  --md-sys-color-surface-container-low: #f4f3f7;
+  --md-sys-color-surface-container: #eeedf1;
+  --md-sys-color-surface-container-high: #e8e7ec;
+  --md-sys-color-surface-container-highest: #e2e2e6;
 
-  //DayNightSwitch
-  --theme-stars-day: #444;
-  --theme-moon-day: #000;
-  --theme-stars-night: #fff;
-  --theme-moon-night: #ff0;
+  --md-sys-color-outline: #73777f;
+  --md-sys-color-outline-variant: #c3c6cf;
+  --md-sys-color-inverse-surface: #2f3033;
+  --md-sys-color-inverse-on-surface: #f1f0f4;
+  --md-sys-color-inverse-primary: #a9c7ff;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-shadow: #000000;
+
+  // The day/night switch is an illustration rather than chrome, so these are its
+  // own drawing colours and are exempt exactly as chart data is.
+  --theme-stars-day: #444444;
+  --theme-moon-day: #000000;
+  --theme-stars-night: #ffffff;
+  --theme-moon-night: #ffff00;
+
+  @include md-legacy-aliases;
+}
+
+@mixin dark-theme {
+  @include md-typography;
+  @include md-elevation;
+
+  --md-sys-color-primary: #a9c7ff;
+  --md-sys-color-on-primary: #002e60;
+  --md-sys-color-primary-container: #004488;
+  --md-sys-color-on-primary-container: #d5e3ff;
+  --md-sys-color-secondary: #bdc7dc;
+  --md-sys-color-on-secondary: #273141;
+  --md-sys-color-secondary-container: #3d4758;
+  --md-sys-color-on-secondary-container: #d9e3f8;
+  --md-sys-color-tertiary: #a2d399;
+  --md-sys-color-on-tertiary: #0d3910;
+  --md-sys-color-tertiary-container: #245023;
+  --md-sys-color-on-tertiary-container: #bdf0b4;
+  --md-sys-color-error: #ffb4ab;
+  --md-sys-color-on-error: #690005;
+  --md-sys-color-error-container: #93000a;
+  --md-sys-color-on-error-container: #ffdad6;
+
+  --md-sys-color-surface: #111318;
+  --md-sys-color-on-surface: #e2e2e6;
+  --md-sys-color-surface-variant: #43474e;
+  --md-sys-color-on-surface-variant: #c3c6cf;
+  --md-sys-color-surface-container-lowest: #0c0e13;
+  --md-sys-color-surface-container-low: #191c20;
+  --md-sys-color-surface-container: #1d2024;
+  --md-sys-color-surface-container-high: #282a2f;
+  --md-sys-color-surface-container-highest: #33353a;
+
+  --md-sys-color-outline: #8d9199;
+  --md-sys-color-outline-variant: #43474e;
+  --md-sys-color-inverse-surface: #e2e2e6;
+  --md-sys-color-inverse-on-surface: #2f3033;
+  --md-sys-color-inverse-primary: #1a5ba8;
+  --md-sys-color-scrim: #000000;
+  --md-sys-color-shadow: #000000;
+
+  --theme-stars-day: #ffffff;
+  --theme-moon-day: #ffff00;
+  --theme-stars-night: #444444;
+  --theme-moon-night: #000000;
+
+  @include md-legacy-aliases;
 }
 
 @mixin contrast-theme {
-  font-family: 'Quicksand', sans-serif;
-  font-size: 16px;
-  font-weight: 400;
+  // M3 high contrast: maximum surface/on-surface separation and outlines that
+  // are genuinely visible, rather than a slightly darker dark theme.
+  @include dark-theme;
 
-  --theme-bg: #000;
-  --theme-bg-hover: #222;
-  --theme-bg-light: #666;
-  --theme-fg: #fff;
-  --theme-fg-light: #aaa;
+  --md-sys-color-primary: #d3e3ff;
+  --md-sys-color-on-primary: #000000;
+  --md-sys-color-primary-container: #6f9aff;
+  --md-sys-color-on-primary-container: #000000;
 
-  //SwitchButton
-  --theme-switch-button-on: #006fff;
+  --md-sys-color-surface: #000000;
+  --md-sys-color-on-surface: #ffffff;
+  --md-sys-color-surface-variant: #1c1e22;
+  --md-sys-color-on-surface-variant: #ffffff;
+  --md-sys-color-surface-container-lowest: #000000;
+  --md-sys-color-surface-container-low: #0a0c10;
+  --md-sys-color-surface-container: #121418;
+  --md-sys-color-surface-container-high: #1c1e22;
+  --md-sys-color-surface-container-highest: #26282c;
 
-  //DayNightSwitch
-  --theme-stars-day: #fff;
-  --theme-moon-day: #ff0;
-  --theme-stars-night: #444;
-  --theme-moon-night: #000;
+  --md-sys-color-outline: #ffffff;
+  --md-sys-color-outline-variant: #b6b9c0;
+  --md-sys-color-error: #ffd2cc;
+
+  @include md-legacy-aliases;
 }

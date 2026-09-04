@@ -73,10 +73,10 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0;
 }
 
+// h1/h2 map onto the M3 headline-small / title-large roles, with a real
+// outline-variant divider in place of the old ::after underline hack.
 h1, h2 {
   position: relative;
-
-  font-size: 1.2em;
 
   margin-left: 0;
   margin-right: 0;
@@ -86,22 +86,28 @@ h1, h2 {
   width: calc(100% - 0.5em);
   overflow: hidden;
 
-  &:after {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    content: '';
-
-    width: 100%;
-    height: 1px;
-    background-color: var(--theme-bg-light);
-  }
+  border-bottom: solid 1px var(--md-sys-color-outline-variant);
 }
 
 h1 {
+  font-size: var(--md-sys-typescale-headline-small-size);
+  line-height: var(--md-sys-typescale-headline-small-line);
+
   width: 100%;
   text-align: center;
   padding-left: 0;
+}
+
+h2 {
+  font-size: var(--md-sys-typescale-title-large-size);
+  line-height: var(--md-sys-typescale-title-large-line);
+}
+
+h3 {
+  font-size: var(--md-sys-typescale-title-medium-size);
+  line-height: var(--md-sys-typescale-title-medium-line);
+  font-weight: var(--md-sys-typescale-title-medium-weight);
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
 }
 
 p {
@@ -114,9 +120,11 @@ a {
   text-decoration: underline;
 }
 
+// kbd becomes an M3 surface-container-high chip.
 kbd {
-  background-color: var(--theme-bg-light);
-  border-radius: 0.2em;
+  background-color: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+  border-radius: $md-shape-xs;
   margin: 0;
   padding: 0 0.2em;
 }
@@ -136,20 +144,20 @@ input {
   color: inherit;
 }
 
-// scrollbar
+// scrollbar: outline-variant thumb over the surface.
 ::-webkit-scrollbar {
   width: 0.5em;
 }
 ::-webkit-scrollbar-track {
-  background: var(--theme-bg);
+  background: var(--md-sys-color-surface);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--theme-bg-light);
+  background: var(--md-sys-color-outline-variant);
   border-radius: 0.5em;
-  border: solid var(--theme-bg) 0.1em;
+  border: solid var(--md-sys-color-surface) 0.1em;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--theme-fg-light);
+  background: var(--md-sys-color-outline);
 }
 
 //app-error
@@ -159,8 +167,8 @@ input {
   width: 100vw;
   height: 100vh;
 
-  background-color: var(--theme-bg);
-  color: var(--theme-fg);
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
 
   > div {
     position: absolute;
@@ -169,6 +177,9 @@ input {
     transform: translate(-50%, -50%);
 
     text-align: center;
+
+    font-size: var(--md-sys-typescale-body-large-size);
+    line-height: var(--md-sys-typescale-body-large-line);
 
     img {
       max-width: 10em;
@@ -179,7 +190,9 @@ input {
     }
 
     .bm-app-err-hint {
-      color: var(--theme-fg-light);
+      font-size: var(--md-sys-typescale-body-medium-size);
+      line-height: var(--md-sys-typescale-body-medium-line);
+      color: var(--md-sys-color-on-surface-variant);
     }
 
   }

@@ -60,13 +60,23 @@ export default {
   max-width: 20em;
   height: 100%;
 
-  filter: drop-shadow(1px 1px 3px #0008);
+  // M3 side sheet: a surface-container plane at elevation 1, square against the
+  // screen edge and rounded only on the inner corners, which is what distinguishes
+  // a docked sheet from a floating dialog.
+  border-radius: 0 $md-shape-l $md-shape-l 0;
+  box-shadow: var(--md-sys-elevation-1);
 
-  background-color: var(--theme-bg);
-  color: var(--theme-fg);
+  background-color: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface);
 
   &-enter-active, &-leave-active {
-    transition: opacity 0.3s;
+    transition: opacity $md-duration-long $md-easing-standard;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &-enter-active, &-leave-active {
+      transition: none;
+    }
   }
 
   &-enter, &-leave-to {
@@ -96,11 +106,16 @@ export default {
   }
 
   > .title {
-    line-height: 2em;
+    // M3 gives a sheet header the title-large role, and a real divider rather than
+    // a background change, so the header reads as one plane with the list.
+    font-size: var(--md-sys-typescale-title-large-size);
+    line-height: var(--md-sys-typescale-title-large-line);
+    font-weight: 500;
     text-align: center;
+    color: var(--md-sys-color-on-surface);
 
     background-color: inherit;
-    border-bottom: solid 1px var(--theme-bg-hover);
+    border-bottom: solid 1px var(--md-sys-color-outline-variant);
 
     padding: 0.5em;
     @media (max-width: $mobile-break) {
@@ -122,9 +137,11 @@ export default {
     }
 
     hr {
+      // A divider is a hairline in the outline-variant role, not a 2px slab in a
+      // background colour.
       border: none;
-      border-bottom: solid 2px var(--theme-bg-hover);
-      margin: 0.5em 0;
+      border-bottom: solid 1px var(--md-sys-color-outline-variant);
+      margin: 8px 0;
     }
   }
 }

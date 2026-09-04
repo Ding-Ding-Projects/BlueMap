@@ -1,5 +1,5 @@
 <template>
-  <div class="position-input">
+  <div class="position-input" role="group">
     <NumberInput label="x" :value="controls.position.x" v-on:input="controls.position.x = parseFloat($event.target.value);" />
     <NumberInput label="y" :value="controls.position.y" v-on:input="controls.position.y = parseFloat($event.target.value);" v-if="appState.controls.state === 'free'" />
     <NumberInput label="z" :value="controls.position.z" v-on:input="controls.position.z = parseFloat($event.target.value);" />
@@ -25,6 +25,8 @@
 </script>
 
 <style lang="scss">
+  @import "/src/scss/variables.scss";
+
   .position-input {
     display: flex;
     user-select: none;
@@ -33,7 +35,7 @@
       width: 100%;
 
       &:not(:first-child) {
-        border-left: solid 1px var(--theme-bg-light);
+        border-left: solid 1px var(--md-sys-color-outline-variant);
       }
     }
   }

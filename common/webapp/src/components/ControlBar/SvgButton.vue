@@ -1,5 +1,16 @@
 <template>
-  <div class="svg-button" :class="{active: active}" @click="$emit('action', $event)">
+  <div
+    class="svg-button"
+    :class="{active: active}"
+    role="button"
+    tabindex="0"
+    :aria-label="title || undefined"
+    :aria-pressed="toggle ? (active ? 'true' : 'false') : undefined"
+    :title="title || undefined"
+    @click="$emit('action', $event)"
+    @keydown.enter.prevent="$emit('action', $event)"
+    @keydown.space.prevent="$emit('action', $event)"
+  >
     <slot />
   </div>
 </template>
@@ -9,51 +20,91 @@
     name: "SvgButton",
     props: {
       active: Boolean,
+      toggle: Boolean,
+      title: String,
     }
   }
 </script>
 
 <style lang="scss">
-.svg-button {
-  position: relative;
-  pointer-events: auto;
-  overflow: hidden;
-  cursor: pointer;
+  @import "/src/scss/variables.scss";
 
-  min-width: 2em;
-  min-height: 2em;
+  // M3 icon-button anatomy: a 48px touch target wrapping a 40px painted,
+  // fully-rounded container. The state layer is a currentColor overlay
+  // (::before), never a background-colour swap.
+  .svg-button {
+    position: relative;
+    pointer-events: auto;
+    cursor: pointer;
+    user-select: none;
 
-  background-color: var(--theme-bg);
-  color: var(--theme-fg);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-  &:hover {
-    background-color: var(--theme-bg-hover);
-  }
+    box-sizing: border-box;
+    min-width: $md-touch-target;
+    min-height: $md-touch-target;
+    width: $md-touch-target;
+    height: $md-touch-target;
 
-  &.active {
-    background-color: var(--theme-bg-light);
-  }
+    color: var(--md-sys-color-on-surface-variant);
+    background-color: transparent;
+    border-radius: $md-shape-full;
 
-  &:active {
-    background-color: var(--theme-fg-light);
-    color: var(--theme-bg);
-  }
+    transition: color $md-duration-short $md-easing-standard,
+      background-color $md-duration-short $md-easing-standard;
 
-  svg {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    &::before {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border-radius: inherit;
+      background-color: currentColor;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity $md-duration-short $md-easing-standard;
+    }
 
-    height: 1.8em;
+    &:hover::before {
+      opacity: $md-state-hover;
+    }
 
-    fill: var(--theme-fg-light);
-  }
+    &:focus-visible {
+      outline: 3px solid var(--md-sys-color-primary);
+      outline-offset: 2px;
+    }
 
-  &:active {
+    &:focus-visible::before {
+      opacity: $md-state-focus;
+    }
+
+    &:active::before,
+    &.active::before {
+      opacity: $md-state-pressed;
+    }
+
+    // M3 "selected" icon button: filled with the primary container role,
+    // never just a re-tinted state layer.
+    &.active {
+      color: var(--md-sys-color-on-primary-container);
+      background-color: var(--md-sys-color-primary-container);
+    }
+
     svg {
-      fill: var(--theme-bg-light);
+      position: relative;
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+      pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+
+      &::before {
+        transition: none;
+      }
     }
   }
-}
 </style>
