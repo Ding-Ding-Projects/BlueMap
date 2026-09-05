@@ -44,7 +44,7 @@ let Stats = function () {
     let beginTime = ( performance || Date ).now(), prevTime = beginTime, frames = 0;
     let prevFrameTime = beginTime;
 
-    // lang-gui-exempt: chart series colours on a performance graph. Functional data
+    // material-exempt: chart series colours on a performance graph. Functional data
     // encoding rather than product chrome, chosen to stay distinguishable from each other at
     // one pixel wide - which a palette of related surface roles deliberately would not be.
     let fpsPanel = addPanel( new Stats.Panel( 'FPS', '#0ff', '#002' ) );
@@ -54,7 +54,7 @@ let Stats = function () {
     let memPanel = null;
     if ( self.performance && self.performance.memory ) {
 
-        // lang-gui-exempt: the memory series on the same performance graph.
+        // material-exempt: the memory series on the same performance graph.
         memPanel = addPanel( new Stats.Panel( 'MB', '#f08', '#201' ) );
 
     }
