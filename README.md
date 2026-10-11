@@ -72,3 +72,8 @@ This means we always can decide to not accept a PR for any reason.
 [![JetBrainsLogo](https://bluemap.bluecolored.de/assets/jetbrains.svg)](https://www.jetbrains.com/?from=BlueMap)<br>
 <br>
 Special thanks to [JetBrains](https://www.jetbrains.com/?from=BlueMap) for giving out an OpenSource-Licence for BlueMap development!
+
+
+## Material viewer integration
+
+This branch retains the Material Design 3 viewer and legacy world decoder while integrating official BlueMap v5.29. See [HANDOFF.md](HANDOFF.md) and [ROADMAP.md](ROADMAP.md) for exact source and pending verification. On Windows, run `build.bat` to build the real CLI jar with the embedded viewer. `build-installer.bat` returns exit 2 because this project has no standalone Windows installer target; Worldlens packages the desktop application.

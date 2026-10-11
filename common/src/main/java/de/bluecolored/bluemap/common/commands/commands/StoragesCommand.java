@@ -30,6 +30,7 @@ import de.bluecolored.bluecommands.annotations.Parser;
 import de.bluecolored.bluemap.common.commands.Permission;
 import de.bluecolored.bluemap.common.config.BlueMapConfigManager;
 import de.bluecolored.bluemap.common.config.ConfigurationException;
+import de.bluecolored.bluemap.common.config.MapConfig;
 import de.bluecolored.bluemap.common.config.storage.FileConfig;
 import de.bluecolored.bluemap.common.config.storage.SQLConfig;
 import de.bluecolored.bluemap.common.config.storage.StorageConfig;
@@ -46,6 +47,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static de.bluecolored.bluemap.common.commands.TextFormat.*;
 import static net.kyori.adventure.text.Component.empty;
@@ -113,10 +115,12 @@ public class StoragesCommand {
 
         lines.add(empty());
         lines.add(text("Maps:").color(BASE_COLOR));
-        storage.mapIds()
-                .limit(20)
-                .map(mapId -> formatMapEntry(mapId, storage))
-                .forEach(lines::add);
+        try (Stream<String> mapIds = storage.mapIds()) {
+            mapIds
+                    .limit(20)
+                    .map(mapId -> formatMapEntry(mapId, storageId))
+                    .forEach(lines::add);
+        }
 
         return paragraph("Storage '%s'".formatted(storageId), lines(lines));
     }
@@ -130,7 +134,7 @@ public class StoragesCommand {
     ) throws ConfigurationException, InterruptedException {
         Storage storage = getOrLoadStorage(storageId, source);
 
-        if (isMapLoaded(mapId, storage)) {
+        if (isMapLoaded(mapId, storageId)) {
             source.sendMessage(text("Can't delete a loaded map!").color(NEGATIVE_COLOR)
                     .append(format("""
                             Unload the map by removing it's config-file first,
@@ -164,13 +168,18 @@ public class StoragesCommand {
         return plugin.getBlueMap().getOrLoadStorage(storageId);
     }
 
-    private boolean isMapLoaded(String mapId, Storage storage) {
+    private boolean isMapLoaded(String mapId, String storageId) {
         BmMap map = plugin.getBlueMap().getMaps().get(mapId);
-        return map != null && map.getStorage().equals(storage.map(mapId));
+        if (map == null) return false;
+
+        MapConfig mapConfig = plugin.getBlueMap().getConfig().getMapConfigs().get(mapId);
+        if (mapConfig == null) return false;
+
+        return mapConfig.getStorage().equals(storageId);
     }
 
-    private Component formatMapEntry(String id, Storage storage) {
-        Component loadedIcon = isMapLoaded(id, storage) ?
+    private Component formatMapEntry(String id, String storageId) {
+        Component loadedIcon = isMapLoaded(id, storageId) ?
                 text("✔").color(POSITIVE_COLOR):
                 text("❌").color(BASE_COLOR);
 
