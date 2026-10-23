@@ -1,14 +1,15 @@
 <template>
-  <div id="app" :class="{'theme-light': appState.theme === 'light', 'theme-dark': appState.theme === 'dark', 'theme-contrast': appState.theme === 'contrast'}">
+  <VApp id="app" :theme="appState.theme === 'light' ? 'light' : 'dark'" :class="{'theme-light': appState.theme === 'light', 'theme-dark': appState.theme === 'dark', 'theme-contrast': appState.theme === 'contrast'}">
     <FreeFlightMobileControls v-if="mapViewer.mapState === 'loaded' && appState.controls.state === 'free'" />
     <ZoomButtons v-if="showMapMenu && appState.controls.showZoomButtons && appState.controls.state !== 'free'" />
     <ControlBar />
-    <div v-if="mapViewer.mapState !== 'loaded'" class="map-state-message">{{ $t("map." + mapViewer.mapState) }}</div>
+    <VAlert v-if="mapViewer.mapState !== 'loaded'" class="map-state-message" :type="mapViewer.mapState === 'errored' ? 'error' : 'info'" variant="tonal" role="status">{{ $t("map." + mapViewer.mapState) }}</VAlert>
     <MainMenu :menu="appState.menu" />
-  </div>
+  </VApp>
 </template>
 
 <script>
+import { VApp, VAlert } from 'vuetify/components';
 import ControlBar from "./components/ControlBar/ControlBar.vue";
 import MainMenu from "./components/Menu/MainMenu.vue";
 import FreeFlightMobileControls from "./components/Controls/FreeFlightMobileControls.vue";
@@ -17,6 +18,7 @@ import ZoomButtons from "./components/Controls/ZoomButtons.vue";
 export default {
   name: 'App',
   components: {
+    VApp, VAlert,
     FreeFlightMobileControls,
     MainMenu,
     ControlBar,
@@ -58,7 +60,8 @@ export default {
 
     // M3 surface background / on-surface text and the body-large type role,
     // established once at the shell root so every descendant inherits it.
-    background-color: var(--md-sys-color-surface);
+    // The shell overlays terrain. Only controls paint surfaces, not this full-screen layer.
+    background-color: transparent;
     color: var(--md-sys-color-on-surface);
 
     font-size: 1rem;

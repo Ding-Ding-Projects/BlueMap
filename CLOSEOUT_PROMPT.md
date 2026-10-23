@@ -1,3 +1,20 @@
-# BlueMap continuation
+# Maintained viewer preservation checkpoint
 
-Objective: integrate official v5.29 while retaining the Material Design 3 viewer and legacy decoder, then update Worldlens and its complete applicable feature inventory. Current owning branch is material-design-3, baseline be3aa7a17e490f1daccad7f06b1fc01b35fe1ec8, merged upstream a61e143fe1e069c536159e0bc79410d5b6da3885. Root build.bat /s passed at ef40bdd3feead2c0748fe4b92b2c054b7305e271. HANDOFF.md records the exact JAR hash, embedded source identity, web assets and earlier interrupted attempts. Rendering, GUI, other adapters and all-feature acceptance remain pending. Preserve the legacy decoder and viewer, advance Worldlens pins with exact provenance, complete remaining workflows and confirm pushed refs. No destructive cleanup or history rewrite. The load-bearing material-design-3 branch remains required by Worldlens; the default master is the existing upstream mirror and has not been repurposed.
+Owner requested immediate source preservation. The viewer rewrite remains incomplete.
+
+Repository: Ding-Ding-Projects/BlueMap
+Implementation branch: codex/managed-map-chrome-20261022
+Source snapshot branch: codex/bluemap-managed-map-preservation-20261023
+Baseline: fcfea02697c23bbedb6960f16a6336ef85d14d5f
+
+## Preserved source
+
+Pinned Vuetify 3.13.0 and real components replace main toolbar, menu, buttons and form controls. The full-screen overlay is transparent instead of covering terrain. Renderer algorithms are unchanged.
+
+## Verification
+
+Locked npm installation and whitespace inspection completed. Actual root build, frontend build, terrain/resource/camera interaction, keyboard/layout/scale/language parity and current screenshots remain unverified. Remaining compass, day/night and view-switch controls still need conversion and review. No release or completed runtime result is claimed.
+
+## Preservation routing
+
+The immutable source snapshot is retained on the source snapshot branch while the original checked-out HEAD remains at its exact baseline for active parent source-privacy scans. After those scans settle, adopt the preserved snapshot into the owning implementation branch without discarding data. Reconcile the maintained target before integration and update the parent source pin only after the intended child source is pushed and verified.

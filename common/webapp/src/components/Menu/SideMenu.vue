@@ -1,22 +1,23 @@
 <template>
   <Transition name="side-menu" @enter="buttonEnterAnimation(); $emit('enter', $event)">
-    <div class="side-menu" v-if="open">
+    <VSheet class="side-menu" v-if="open" elevation="3" role="region" :aria-label="title">
       <MenuButton :close="open && rendered" :back="back" @action="$emit('back', $event)" />
       <MenuButton class="full-close" v-if="open && back" :close="true" @action="$emit('close', $event)" />
       <div class="title">{{ title }}</div>
       <div class="content">
         <slot />
       </div>
-    </div>
+    </VSheet>
   </Transition>
 </template>
 
 <script>
+import { VSheet } from 'vuetify/components';
 import MenuButton from "../ControlBar/MenuButton.vue";
 
 export default {
   name: "SideMenu",
-  components: {MenuButton},
+  components: {MenuButton, VSheet},
   props: {
     title: {
       type: String,

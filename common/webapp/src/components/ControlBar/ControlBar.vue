@@ -1,5 +1,5 @@
 <template>
-  <div class="control-bar">
+  <VToolbar class="control-bar" density="comfortable" rounded="xl" elevation="2" role="toolbar" :aria-label="$t('menu.tooltip')">
     <MenuButton :close="appState.menu.isOpen" :back="false" @action="appState.menu.reOpenPage()" :title="$t('menu.tooltip')" />
     <div class="space thin-hide"></div>
     <SvgButton v-if="appState.maps.length > 1" class="thin-hide" :title="$t('maps.tooltip')"
@@ -57,10 +57,11 @@
     </SvgButton>
     <PositionInput v-if="showMapMenu" class="pos-input" />
     <Compass v-if="showMapMenu" :title="$t('compass.tooltip')" />
-  </div>
+  </VToolbar>
 </template>
 
 <script>
+  import { VToolbar } from 'vuetify/components';
   import PositionInput from "./PositionInput.vue";
   import Compass from "./Compass.vue";
   import DayNightSwitch from "./DayNightSwitch.vue";
@@ -71,6 +72,7 @@
   export default {
     name: "ControlBar",
     components: {
+      VToolbar,
       SvgButton,
       MenuButton,
       ControlsSwitch,

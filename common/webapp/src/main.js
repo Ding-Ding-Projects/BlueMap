@@ -24,6 +24,8 @@
  */
 
 import * as Vue from 'vue';
+import { createVuetify } from 'vuetify';
+import 'vuetify/styles';
 import App from './App.vue';
 import * as BlueMap from "./js/BlueMap";
 import {BlueMapApp} from "./js/BlueMapApp";
@@ -47,6 +49,7 @@ async function load() {
       render: h => h(App)
     });
     vue.config.globalProperties.$bluemap = bluemap;
+    vue.use(createVuetify({ defaults: { VBtn: { rounded: 'xl' }, VTextField: { variant: 'outlined' } } }));
 
     // load languages
     vue.use(i18nModule);
