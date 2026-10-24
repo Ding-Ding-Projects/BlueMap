@@ -77,7 +77,7 @@
       }
     }
 
-    &.active,
+    &.v-btn--active,
     &:active {
       svg {
         .north {

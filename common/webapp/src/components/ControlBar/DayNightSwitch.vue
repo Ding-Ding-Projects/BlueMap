@@ -72,7 +72,7 @@ export default {
       }
     }
 
-    &.active,
+    &.v-btn--active,
     &:active {
       svg {
         fill: var(--theme-moon-night);
