@@ -1,20 +1,19 @@
-# Maintained viewer preservation checkpoint
+# Maintained viewer source preservation
 
-Owner requested immediate source preservation. The viewer rewrite remains incomplete.
+The owner requested immediate preservation in the original repositories. The maintained viewer implementation remains unfinished.
 
 Repository: Ding-Ding-Projects/BlueMap
-Implementation branch: codex/managed-map-chrome-20261022
-Source snapshot branch: codex/bluemap-managed-map-preservation-20261023
-Baseline: fcfea02697c23bbedb6960f16a6336ef85d14d5f
+Default branch: master
+Source checkpoint before this handoff: dadc7aeb7d46cd3b1de6285637fc7a0c5603e295
 
 ## Preserved source
 
-Pinned Vuetify 3.13.0 and real components replace main toolbar, menu, buttons and form controls. The full-screen overlay is transparent instead of covering terrain. Renderer algorithms are unchanged.
+The continuation includes authenticated hosted annotations, shared revision handling, localized Material controls and selected-state lighting indicators. Existing terrain and projection algorithms remain the baseline. The current source is preserved without claiming packaged runtime acceptance.
 
-## Verification
+## Verification and remaining work
 
-Locked npm installation and whitespace inspection completed. Actual root build, frontend build, terrain/resource/camera interaction, keyboard/layout/scale/language parity and current screenshots remain unverified. Remaining compass, day/night and view-switch controls still need conversion and review. No release or completed runtime result is claimed.
+The urgent outgoing review checked all 18 previously unpublished text objects (66,857 bytes) and found no private-language candidates. This review is source publication evidence, not a build or runtime verdict. Exact root build and installer production, real hosted sign-in and two-session conflict handling, terrain/resources/camera interaction, accessibility, localization, layout and current screenshots remain unverified for this continuation. No new product release or installed update is claimed.
 
-## Preservation routing
+## Resume
 
-The immutable source snapshot is retained on the source snapshot branch while the original checked-out HEAD remains at its exact baseline for active parent source-privacy scans. After those scans settle, adopt the preserved snapshot into the owning implementation branch without discarding data. Reconcile the maintained target before integration and update the parent source pin only after the intended child source is pushed and verified.
+Use the verified default-branch source and retain the incomplete implementation branches and checkouts. The parent Worldlens source pin must be updated only after the child source push is read back. Do not delete incomplete or unproven work.
