@@ -10,6 +10,12 @@
       <SimpleButton @action="menu.openPage('markers', () => $t('markers.title'), {markerSet: markers})" :submenu="true">{{ $t("markers.button") }}</SimpleButton>
       <SimpleButton @action="menu.openPage('settings', () => $t('settings.title'))" :submenu="true">{{ $t("settings.button") }}</SimpleButton>
       <SimpleButton @action="menu.openPage('info', () => $t('info.title'))" :submenu="true">{{ $t("info.button") }}</SimpleButton>
+      <SimpleButton @action="menu.openPage('shared-annotations', () => hostingLabel)" :submenu="true">{{ hostingLabel }}</SimpleButton>
+      <div v-if="$bluemap.mapViewer.data.map" class="menu-view-controls">
+        <Compass :title="$t('compass.tooltip')" />
+        <DayNightSwitch :title="$t('lighting.dayNightSwitch.tooltip')" />
+        <ControlsSwitch />
+      </div>
       <hr>
       <SimpleButton @action="goFullscreen">{{ $t("goFullscreen.button") }}</SimpleButton>
       <SimpleButton @action="$bluemap.resetCamera()">{{ $t("resetCamera.button") }}</SimpleButton>
@@ -23,6 +29,7 @@
 
     <MarkerSetMenu v-if="menu.currentPage().id === 'markers'" :menu="menu" />
 
+    <SharedAnnotations v-show="menu.currentPage().id === 'shared-annotations'" />
     <SettingsMenu v-if="menu.currentPage().id === 'settings'" />
 
     <div class="info-content" v-if="menu.currentPage().id === 'info'" v-html="$t('info.content', {
@@ -33,6 +40,11 @@
 </template>
 
 <script>
+import Compass from '../ControlBar/Compass.vue';
+import DayNightSwitch from '../ControlBar/DayNightSwitch.vue';
+import ControlsSwitch from '../ControlBar/ControlsSwitch.vue';
+import SharedAnnotations from '../Hosting/SharedAnnotations.vue';
+import { hostingText } from '../Hosting/messages.mjs';
 import SideMenu from "./SideMenu.vue";
 import SimpleButton from "./SimpleButton.vue";
 import SettingsMenu from "./SettingsMenu.vue";
@@ -42,7 +54,7 @@ import MapButton from "./MapButton.vue";
 
 export default {
   name: "MainMenu",
-  components: {MapButton, MarkerSetMenu, SettingsMenu, SimpleButton, SideMenu},
+  components: {Compass, DayNightSwitch, ControlsSwitch, SharedAnnotations, MapButton, MarkerSetMenu, SettingsMenu, SimpleButton, SideMenu},
   props: {
     menu: MainMenu
   },
@@ -52,6 +64,7 @@ export default {
       markers: this.$bluemap.mapViewer.markers.data,
     }
   },
+  computed: { hostingLabel() { return hostingText(this.$i18n.locale, "title"); } },
   methods: {
     goFullscreen() {
       document.body.requestFullscreen();
@@ -61,6 +74,7 @@ export default {
 </script>
 
 <style lang="scss">
+.menu-view-controls { display:flex; flex-wrap:wrap; gap:4px; padding:8px; }
 @import "../../scss/variables.scss";
 
 .info-content {

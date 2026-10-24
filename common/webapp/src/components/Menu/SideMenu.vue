@@ -1,6 +1,6 @@
 <template>
   <Transition name="side-menu" @enter="buttonEnterAnimation(); $emit('enter', $event)">
-    <VSheet class="side-menu" v-if="open" elevation="3" role="region" :aria-label="title">
+    <VSheet class="side-menu" v-show="open" elevation="3" role="region" :aria-label="title">
       <MenuButton :close="open && rendered" :back="back" @action="$emit('back', $event)" />
       <MenuButton class="full-close" v-if="open && back" :close="true" @action="$emit('close', $event)" />
       <div class="title">{{ title }}</div>

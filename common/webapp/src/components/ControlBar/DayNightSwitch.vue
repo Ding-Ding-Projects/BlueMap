@@ -1,5 +1,5 @@
 <template>
-  <SvgButton class="day-night-switch" toggle :active="!isDay" :title="title" @action="action">
+  <VBtn icon variant="text" class="day-night-switch" :active="!isDay" :aria-pressed="!isDay" :title="title" :aria-label="title" @click="action">
     <svg viewBox="0 0 30 30">
       <path d="M17.011,19.722c-3.778-1.613-5.533-5.982-3.921-9.76c0.576-1.348,1.505-2.432,2.631-3.204
         c-3.418-0.243-6.765,1.664-8.186,4.992c-1.792,4.197,0.159,9.053,4.356,10.844c3.504,1.496,7.462,0.377,9.717-2.476
@@ -9,18 +9,18 @@
       <circle cx="20.412" cy="13.805" r="1.195"/>
       <circle cx="25.878" cy="23.654" r="1.195"/>
     </svg>
-  </SvgButton>
+  </VBtn>
 </template>
 
 <script>
 import {animate, EasingFunctions} from "../../js/util/Utils";
-import SvgButton from "./SvgButton.vue";
+import { VBtn } from 'vuetify/components';
 
-let animation;
+
 
 export default {
     name: "DayNightSwitch",
-  components: {SvgButton},
+  components: {VBtn},
   props: {
     title: String,
   },
@@ -34,32 +34,35 @@ export default {
         return this.mapViewer.uniforms.sunlightStrength.value > 0.6;
       }
     },
+    beforeUnmount() { if (this.animation) this.animation.cancel(); },
     methods: {
       action(evt) {
 
-        evt.preventDefault();
+        evt?.preventDefault();
 
-        if (animation) animation.cancel();
+        if (this.animation) this.animation.cancel();
 
         let startValue = this.mapViewer.uniforms.sunlightStrength.value;
         let targetValue = this.isDay ? 0.25 : 1;
-        animation = animate(t => {
+        this.animation = animate(t => {
           let u = EasingFunctions.easeOutQuad(t);
           this.mapViewer.uniforms.sunlightStrength.value = startValue * (1-u) + targetValue * u;
           this.$bluemap.mapViewer.redraw();
-        }, 300);
+        }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 300);
       }
     }
   }
 </script>
 
 <style lang="scss">
+.compass, .day-night-switch, .controls-switch { pointer-events: auto; flex-shrink: 0; }
+.day-night-switch svg, .controls-switch svg { width: 24px; height: 24px; fill: currentColor; }
   @import "/src/scss/variables.scss";
 
   // The sun/moon + stars illustration encodes the day/night state itself, so
   // its drawing colours (--theme-moon-day/night, --theme-stars-day/night from
   // variables.scss) are left as-is: they are the data being displayed, not
-  // button chrome. Only the M3 selected/pressed surface (from SvgButton's
+  // button chrome. Only the M3 selected/pressed surface (from VBtn's
   // .active rule) is chrome here.
   .day-night-switch {
     svg {

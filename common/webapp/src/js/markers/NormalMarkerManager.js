@@ -44,12 +44,12 @@ export class NormalMarkerManager extends MarkerManager {
      * @returns {boolean}
      */
     updateFromData(markerData) {
-        this.root.updateMarkerSetsFromData(markerData, [PLAYER_MARKER_SET_ID, "bm-popup-set"]);
+        this.root.updateMarkerSetsFromData(markerData, [PLAYER_MARKER_SET_ID, "bm-popup-set", "worldlens:shared"]);
         return true;
     }
 
     clear() {
-        this.root.updateMarkerSetsFromData({}, [PLAYER_MARKER_SET_ID, "bm-popup-set"]);
+        this.root.updateMarkerSetsFromData({}, [PLAYER_MARKER_SET_ID, "bm-popup-set", "worldlens:shared"]);
     }
 
 }

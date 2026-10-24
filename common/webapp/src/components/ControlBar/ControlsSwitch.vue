@@ -1,6 +1,6 @@
 <template>
-  <div class="controls-switch" role="group">
-    <SvgButton v-if="mapViewer.map.perspectiveView" toggle :active="isPerspectiveView" @action="setPerspectiveView" :title="$t('controls.perspective.tooltip')">
+  <VBtnToggle class="controls-switch" :model-value="controls.state" mandatory :aria-label="$t('controls.perspective.tooltip')">
+    <VBtn icon variant="text" value="perspective" v-if="mapViewer.map.perspectiveView" :active="isPerspectiveView" :aria-pressed="isPerspectiveView" @click="setPerspectiveView" :title="$t('controls.perspective.tooltip')" :aria-label="$t('controls.perspective.tooltip')">
       <svg viewBox="0 0 30 30">
         <path d="M19.475,10.574c-0.166-0.021-0.337-0.036-0.51-0.045c-0.174-0.009-0.35-0.013-0.525-0.011
           c-0.176,0.002-0.353,0.01-0.526,0.024c-0.175,0.015-0.347,0.036-0.515,0.063l-13.39,2.189
@@ -12,13 +12,13 @@
           c-0.059-0.156-0.195-0.313-0.415-0.46l-7.089-4.742c-0.089-0.06-0.192-0.115-0.308-0.166
           c-0.116-0.051-0.243-0.097-0.381-0.138c-0.137-0.041-0.283-0.078-0.438-0.108C19.803,10.621,19.641,10.595,19.475,10.574"/>
       </svg>
-    </SvgButton>
-    <SvgButton v-if="mapViewer.map.flatView" toggle :active="isFlatView" @action="setFlatView" :title="$t('controls.flatView.tooltip')">
+    </VBtn>
+    <VBtn icon variant="text" value="flat" v-if="mapViewer.map.flatView" :active="isFlatView" :aria-pressed="isFlatView" @click="setFlatView" :title="$t('controls.flatView.tooltip')" :aria-label="$t('controls.flatView.tooltip')">
       <svg viewBox="0 0 30 30">
         <path d="M22.371,4.158c1.65,0,3,1.35,3,3v15.684c0,1.65-1.35,3-3,3H7.629c-1.65,0-3-1.35-3-3V7.158c0-1.65,1.35-3,3-3H22.371z"/>
       </svg>
-    </SvgButton>
-    <SvgButton v-if="mapViewer.map.freeFlightView" toggle :active="isFreeFlight" @action="setFreeFlight" :title="$t('controls.freeFlight.tooltip')">
+    </VBtn>
+    <VBtn icon variant="text" value="free" v-if="mapViewer.map.freeFlightView" :active="isFreeFlight" :aria-pressed="isFreeFlight" @click="setFreeFlight" :title="$t('controls.freeFlight.tooltip')" :aria-label="$t('controls.freeFlight.tooltip')">
       <svg viewBox="0 0 30 30">
         <path d="M21.927,11.253c-0.256-0.487-0.915-0.885-1.465-0.885h-2.004c-0.55,0-0.726-0.356-0.39-0.792c0,0,0.698-0.905,0.698-2.041
           c0-2.08-1.687-3.767-3.767-3.767s-3.767,1.687-3.767,3.767c0,1.136,0.698,2.041,0.698,2.041c0.336,0.436,0.161,0.794-0.389,0.797
@@ -27,16 +27,16 @@
           c0.064,0.546,0.567,0.993,1.117,0.993h7.234c0.55,0,1.053-0.447,1.117-0.993l0.635-5.401c0.064-0.546,0.392-0.637,0.727-0.2
           l0.828,1.078c0.335,0.437,0.988,0.55,1.451,0.253l1.823-1.171c0.463-0.297,0.633-0.938,0.377-1.425L21.927,11.253z"/>
       </svg>
-    </SvgButton>
-  </div>
+    </VBtn>
+  </VBtnToggle>
 </template>
 
 <script>
-  import SvgButton from "./SvgButton.vue";
+  import { VBtn, VBtnToggle } from 'vuetify/components';
 
   export default {
     name: "ControlsSwitch",
-    components: {SvgButton},
+    components: {VBtn, VBtnToggle},
     data() {
       return {
         controls: this.$bluemap.appState.controls,
@@ -44,6 +44,7 @@
       }
     },
     computed: {
+      transitionDuration() { return window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 500; },
       isPerspectiveView() {
         return this.controls.state === "perspective";
       },
@@ -56,22 +57,24 @@
     },
     methods: {
       setPerspectiveView() {
-        this.$bluemap.setPerspectiveView(500, this.isFreeFlight ? 100 : 0);
+        this.$bluemap.setPerspectiveView(this.transitionDuration, this.isFreeFlight ? 100 : 0);
       },
       setFlatView() {
-        this.$bluemap.setFlatView(500, this.isFreeFlight ? 100 : 0);
+        this.$bluemap.setFlatView(this.transitionDuration, this.isFreeFlight ? 100 : 0);
       },
       setFreeFlight() {
-        this.$bluemap.setFreeFlight(500);
+        this.$bluemap.setFreeFlight(this.transitionDuration);
       }
     }
   }
 </script>
 
 <style lang="scss">
+.compass, .day-night-switch, .controls-switch { pointer-events: auto; flex-shrink: 0; }
+.day-night-switch svg, .controls-switch svg { width: 24px; height: 24px; fill: currentColor; }
   @import "/src/scss/variables.scss";
 
-  // M3 "button group" cluster: related toggle icon-buttons with a small
+  // M3 "button group" cluster: related icon-buttons with a small
   // consistent gap, rather than a single undifferentiated strip.
   .controls-switch {
     display: flex;

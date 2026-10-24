@@ -26,7 +26,18 @@ export async function setLanguage(lang) {
 async function loadLanguage(lang) {
 	try {
 		if (!i18n.availableLocales.includes(lang)) {
-			let messages = await fetchHocon(`./lang/${lang}.conf`);
+			let messages;
+            if (lang === 'en-zh-HK') {
+                const [english, cantonese] = await Promise.all([fetchHocon('./lang/en.conf'), fetchHocon('./lang/zh-HK.conf')]);
+                const combine = (left, right) => {
+                    if (typeof left === 'string') return typeof right === 'string' && right !== left ? `${left} / ${right}` : left;
+                    if (left && typeof left === 'object' && !Array.isArray(left)) return Object.fromEntries(Object.entries(left).map(([key, value]) => [key, combine(value, right?.[key])]));
+                    return left;
+                };
+                messages = combine(english, cantonese);
+            } else {
+                messages = await fetchHocon(`./lang/${lang}.conf`);
+            }
 			i18n.setLocaleMessage(lang, messages);
 		}
 	} catch (e) {
