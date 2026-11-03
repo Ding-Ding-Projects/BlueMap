@@ -6,21 +6,21 @@
             @close="menu.closeAll()">
 
     <div v-if="menu.currentPage().id === 'root'">
-      <SimpleButton @action="menu.openPage('maps', () => $t('maps.title'))" :submenu="true">{{ $t("maps.button") }}</SimpleButton>
-      <SimpleButton @action="menu.openPage('markers', () => $t('markers.title'), {markerSet: markers})" :submenu="true">{{ $t("markers.button") }}</SimpleButton>
-      <SimpleButton @action="menu.openPage('settings', () => $t('settings.title'))" :submenu="true">{{ $t("settings.button") }}</SimpleButton>
-      <SimpleButton @action="menu.openPage('info', () => $t('info.title'))" :submenu="true">{{ $t("info.button") }}</SimpleButton>
-      <SimpleButton @action="menu.openPage('shared-annotations', () => hostingLabel)" :submenu="true">{{ hostingLabel }}</SimpleButton>
+      <SimpleButton :icon="icons.map" @action="menu.openPage('maps', () => $t('maps.title'))" :submenu="true">{{ $t("maps.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.markers" @action="menu.openPage('markers', () => $t('markers.title'), {markerSet: markers})" :submenu="true">{{ $t("markers.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.settings" @action="menu.openPage('settings', () => $t('settings.title'))" :submenu="true">{{ $t("settings.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.info" @action="menu.openPage('info', () => $t('info.title'))" :submenu="true">{{ $t("info.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.annotations" @action="menu.openPage('shared-annotations', () => hostingLabel)" :submenu="true">{{ hostingLabel }}</SimpleButton>
       <div v-if="$bluemap.mapViewer.data.map" class="menu-view-controls">
         <Compass :title="$t('compass.tooltip')" />
         <DayNightSwitch :title="$t('lighting.dayNightSwitch.tooltip')" />
         <ControlsSwitch />
       </div>
       <hr>
-      <SimpleButton @action="goFullscreen">{{ $t("goFullscreen.button") }}</SimpleButton>
-      <SimpleButton @action="$bluemap.resetCamera()">{{ $t("resetCamera.button") }}</SimpleButton>
-      <SimpleButton @action="$bluemap.takeScreenshot()">{{ $t("screenshot.button") }}</SimpleButton>
-      <SimpleButton @action="$bluemap.updateMap()" :title="$t('updateMap.tooltip')">{{ $t("updateMap.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.fullscreen" @action="goFullscreen">{{ $t("goFullscreen.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.resetCamera" @action="$bluemap.resetCamera()">{{ $t("resetCamera.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.screenshot" @action="$bluemap.takeScreenshot()">{{ $t("screenshot.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.updateMap" @action="$bluemap.updateMap()" :hint="$t('updateMap.tooltip')">{{ $t("updateMap.button") }}</SimpleButton>
     </div>
 
     <div v-if="menu.currentPage().id === 'maps'">
@@ -51,6 +51,7 @@ import SettingsMenu from "./SettingsMenu.vue";
 import {MainMenu} from "../../js/MainMenu";
 import MarkerSetMenu from "./MarkerSetMenu.vue";
 import MapButton from "./MapButton.vue";
+import { MENU_ICONS } from "../../js/MenuIcons.js";
 
 export default {
   name: "MainMenu",
@@ -62,6 +63,7 @@ export default {
     return {
       appState: this.$bluemap.appState,
       markers: this.$bluemap.mapViewer.markers.data,
+      icons: MENU_ICONS,
     }
   },
   computed: { hostingLabel() { return hostingText(this.$i18n.locale, "title"); } },

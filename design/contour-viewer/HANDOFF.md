@@ -24,6 +24,9 @@ Images in the artboards are uploaded canvas assets (`/_blob/...`); the source im
   position, and a bottom floating toolbar for markers, players, lighting, view and camera
   reset). Phones keep one top row; the toolbar's actions stay reachable from the menu.
 - `ZoomButtons.vue`: stacked under the compass, so the bottom edge belongs to the toolbar.
+- `SimpleButton.vue` and `MainMenu.vue`: every navigation row has a leading icon (paths from
+  Material Design Icons in `src/js/MenuIcons.js`), and the update-map row's hint is supporting
+  text under the label instead of being rendered as a second title above it.
 - `SideMenu.vue`: a floating side sheet with the extra-large corner, opaque
   surface-container-low; full screen on phones.
 
@@ -32,7 +35,7 @@ CI (headless Chrome, 1440×900 and 390×844, 2026-11-02).
 
 ## Still to build
 
-- Menu rows with leading icons and the inline map list from `Menu.dc.html`.
+- The inline map list from `Menu.dc.html` (menu rows now have leading icons).
 - The settings sheet's grouped layout, search field and segmented controls (`Settings.dc.html`).
 - The phone markers bottom sheet (`Phone.dc.html`).
 - Outlined coordinate fields in the position card (today they are the filled variant).
