@@ -1,5 +1,16 @@
 # BlueMap 5.29 integration handoff
 
+## 2026-11-02 Contour viewer redesign, first slice
+
+The web viewer is being redesigned in the Contour direction shared with WorldLens (pure
+Material Design 3, one opaque surface in focus). The designer files are in
+`design/contour-viewer/` with their own handoff. Built so far in `common/webapp`: the control bar
+split into floating clusters with a bottom toolbar, zoom stacked under the compass, and a floating
+side sheet. Verified by `vite build`, `eslint` on the changed files, the annotations test file
+(7 pass) and browser captures against a map rendered by WorldLens CI. Not yet verified inside the
+packaged WorldLens app or on a real server.
+
+
 The material-design-3 branch began at be3aa7a17e490f1daccad7f06b1fc01b35fe1ec8. Official v5.29 is a61e143fe1e069c536159e0bc79410d5b6da3885, 106 upstream commits after the old source pin. The merge applied without conflicts and retains all six fork contributions, including Material Design 3 components/tokens and the legacy 1.12 decoder. The API submodule is updated to the merged pin. Source integration is not build, rendering, UI or installer acceptance.
 
 Root build.bat runs the actual Gradle CLI shadow-jar task, using an existing Java 25 or a pinned digest-verified user-scoped JDK. Gradle owns its pinned Node/webapp acquisition. No elevation or host restart is performed. build-installer.bat returns 2 with the exact reason that no standalone Windows installer target exists. Worldlens packages the desktop application separately.

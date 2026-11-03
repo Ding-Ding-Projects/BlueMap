@@ -6,7 +6,7 @@ The maintained viewer registers Vuetify 3.13.0 through its Vue application. The 
 | --- | --- |
 | Overlay root | `VApp` with a transparent background |
 | Loading and error notices | `VAlert` |
-| Map toolbar | `VToolbar` |
+| Map toolbar | `VToolbar` (the bottom floating toolbar) and `VSheet` clusters for the menu, compass and camera position |
 | Toolbar actions | `VBtn` |
 | Navigation rows | `VListItem` |
 | Side panels | `VSheet` |
@@ -21,11 +21,15 @@ The full-screen overlay must remain transparent: passing pointer events through 
 
 Runtime acceptance remains separate from this inventory. Verify terrain visibility, tile/texture delivery, keyboard actions, theme transitions, narrow layouts and supported display scales against the built viewer. The compass, day/night and view-switch controls now use direct Vuetify components. Their built interaction and layout review remains pending; component provenance alone does not prove visual conformance.
 
+Contour layout (2026-11-02): the controls are no longer one strip across the top. Each cluster is its own opaque `VSheet` or `VToolbar` at a screen corner, with the view controls in one floating toolbar at the bottom; the side menu floats with the extra-large corner. See `design/contour-viewer/`.
+
 ## 廣東話
 
 維護版檢視器透過 Vue 註冊 Vuetify 3.13.0。工具列、按鈕、清單、側欄、文字及座標欄位、滑桿、開關和狀態訊息均使用表內的正式元件。Three.js 地形及控制演算法維持獨立。
 
 全畫面覆蓋層必須透明，只由各控制項繪畫自己的背景。滑鼠事件可以穿過不透明覆蓋層，但地形畫面仍會被遮住。此表只記錄元件來源，實際地形、鍵盤操作、主題、窄畫面及顯示比例仍須使用真正建置版本驗證。指南針、日夜及視角切換現已使用正式 Vuetify 元件，但仍須以真正建置版本完成互動及版面驗收。
+
+Contour 版面（2026-11-02）：控制項唔再係頂部一條長條。每組控制各自係一個不透明嘅 `VSheet` 或 `VToolbar`，放喺畫面角落；視角控制集中喺底部一條浮動工具列，側邊選單亦改為浮起嘅大圓角面板。設計檔喺 `design/contour-viewer/`。
 
 ## Hosted viewer state inventory
 

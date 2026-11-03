@@ -45,10 +45,13 @@ export default {
   // treatment), while each SvgButton keeps its own 48px touch target and
   // state layer. A true 56px FAB isn't used here since these are a paired
   // zoom in/out cluster rather than a single primary action.
+  // Contour: stacked under the compass in the top-right corner, so the bottom of the screen
+  // belongs to the floating toolbar and nothing is drawn over anything else.
   #zoom-buttons {
     position: fixed;
-    bottom: 0;
-    right: 0;
+    top: calc(16px + #{$md-touch-target} + 8px + 12px);
+    right: 16px;
+    pointer-events: auto;
 
     display: flex;
     flex-direction: column;
@@ -59,6 +62,5 @@ export default {
     border-radius: $md-shape-l;
     padding: 4px;
 
-    margin: 0.5em;
   }
 </style>

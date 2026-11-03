@@ -57,17 +57,26 @@ export default {
 
   pointer-events: auto;
 
-  width: 100%;
-  max-width: 20em;
-  height: 100%;
+  width: calc(100% - 24px);
+  max-width: 22em;
+  height: calc(100% - 24px);
+  margin: 12px;
 
-  // M3 side sheet: a surface-container plane at elevation 1, square against the
-  // screen edge and rounded only on the inner corners, which is what distinguishes
-  // a docked sheet from a floating dialog.
-  border-radius: 0 $md-shape-l $md-shape-l 0;
+  // Contour: a floating M3 side sheet, an opaque surface-container-low plane with the
+  // extra-large corner and level-1 elevation, held off the screen edge so the map reads round
+  // it. It is opaque by construction: nothing behind it is ever read through it.
+  border-radius: $md-shape-xl;
   box-shadow: var(--md-sys-elevation-1);
 
-  background-color: var(--md-sys-color-surface-container);
+  background-color: var(--md-sys-color-surface-container-low);
+
+  @media (max-width: $mobile-break) {
+    width: 100%;
+    max-width: unset;
+    height: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
   color: var(--md-sys-color-on-surface);
 
   &-enter-active, &-leave-active {

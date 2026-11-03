@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BlueMap navigation sheet</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&amp;family=Roboto+Mono:wght@400;500&amp;family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+[data-wl-theme="dark"]{--wl-bg:#0B0E11;--wl-surface:#101418;--wl-surf-low:#191C20;--wl-surf-cont:#1D2024;--wl-surf-high:#272A2E;--wl-surf-highest:#323539;--wl-outline-var:#42474E;--wl-outline:#8C9199;--wl-on-surf-var:#C2C7CF;--wl-on-surf:#E1E2E8;--wl-primary:#8FCDFF;--wl-on-primary:#003351;--wl-prim-cont:#004B73;--wl-on-prim-cont:#CEE5FF;--wl-sec-cont:#384956;--wl-on-sec-cont:#D3E5F5;--wl-tert:#D1BFE7;--wl-error:#FFB4AB}
+[data-wl-theme="light"]{--wl-bg:#F7F9FF;--wl-surface:#FFFFFF;--wl-surf-low:#F1F4FA;--wl-surf-cont:#EBEEF4;--wl-surf-high:#E5E8EE;--wl-surf-highest:#DFE2E8;--wl-outline-var:#C1C7CE;--wl-outline:#6C737A;--wl-on-surf-var:#41474D;--wl-on-surf:#181C20;--wl-primary:#00639B;--wl-on-primary:#FFFFFF;--wl-prim-cont:#CDE5FF;--wl-on-prim-cont:#001D32;--wl-sec-cont:#D3E5F5;--wl-on-sec-cont:#0C1D29;--wl-tert:#66587B;--wl-error:#BA1A1A}
+[data-wl-theme="contrast"]{--wl-bg:#000000;--wl-surface:#000000;--wl-surf-low:#000000;--wl-surf-cont:#000000;--wl-surf-high:#141414;--wl-surf-highest:#1F1F1F;--wl-outline-var:#FFFFFF;--wl-outline:#FFFFFF;--wl-on-surf-var:#FFFFFF;--wl-on-surf:#FFFFFF;--wl-primary:#FFFFFF;--wl-on-primary:#000000;--wl-prim-cont:#FFFFFF;--wl-on-prim-cont:#000000;--wl-sec-cont:#000000;--wl-on-sec-cont:#FFFF00;--wl-tert:#FFFF00;--wl-error:#FF5449}
+[data-wl-theme="contrast"] .card{outline:1px solid #FFFFFF}
+.msr{font-family:"Material Symbols Rounded";font-weight:normal;font-style:normal;font-size:24px;line-height:1;display:inline-block;white-space:nowrap;font-feature-settings:"liga";-webkit-font-smoothing:antialiased}
+.fill{font-variation-settings:"FILL" 1}
+.sl{position:relative;overflow:hidden;cursor:pointer}
+.sl::after{content:"";position:absolute;inset:0;border-radius:inherit;background:currentColor;opacity:0;transition:opacity 150ms cubic-bezier(.2,0,0,1);pointer-events:none}
+.sl:hover::after{opacity:.08}.sl:active::after{opacity:.10}
+.sl:focus-visible{outline:3px solid var(--wl-primary);outline-offset:2px}
+.ib{width:48px;height:48px;border:0;border-radius:24px;background:transparent;color:var(--wl-on-surf-var);display:inline-flex;align-items:center;justify-content:center;text-decoration:none}
+.nav{display:flex;align-items:center;gap:16px;min-height:56px;padding:0 16px 0 16px;border:0;border-radius:28px;background:transparent;color:var(--wl-on-surf-var);font:500 14px/20px Roboto,sans-serif;text-decoration:none;text-align:left;width:100%;box-sizing:border-box}
+.nav:hover{color:var(--wl-on-surf)}
+.nav[aria-current="true"]{background:var(--wl-sec-cont);color:var(--wl-on-sec-cont)}
+.nav[aria-current="true"] .msr{font-variation-settings:"FILL" 1}
+.head{margin:16px 16px 8px;font:500 14px/20px Roboto,sans-serif;color:var(--wl-on-surf-var)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{transition-duration:.001ms!important;animation-duration:.001ms!important}}
+</style>
+</helmet>
+<div data-wl-theme="{{theme}}" style="min-height: 900px; position: relative; overflow: hidden; background: var(--wl-bg); color: var(--wl-on-surf); font-family: Roboto, Helvetica, sans-serif; display: flex;">
+  <img src="/_blob/04f6b21208c7d88aaaa0bc6d4efe1bda" alt="The Heapandyville overworld rendered in 3D" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+
+  <nav aria-labelledby="sheet-title" class="card" style="position: relative; margin: 12px; width: 360px; max-width: calc(100% - 24px); box-sizing: border-box; padding: 12px; border-radius: 28px; background: var(--wl-surf-low); box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15); display: flex; flex-direction: column; gap: 2px; overflow-y: auto;">
+    <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0 8px 16px;">
+      <span id="sheet-title" style="flex: 1; font-size: 22px; line-height: 28px;">BlueMap</span>
+      <a href="Main.dc.html" class="sl ib" aria-label="Close the menu"><span class="msr" aria-hidden="true">close</span></a>
+    </div>
+
+    <sc-for list="{{pages}}" as="p" hint-placeholder-count="5">
+      <sc-if value="{{p.isLink}}" hint-placeholder-val="{{false}}">
+        <a href="{{p.href}}" class="nav sl"><span class="msr" aria-hidden="true">{{p.icon}}</span><span style="flex: 1;">{{p.label}}</span><span class="msr" aria-hidden="true" style="font-size: 20px;">chevron_right</span></a>
+      </sc-if>
+      <sc-if value="{{p.isButton}}" hint-placeholder-val="{{true}}">
+        <button type="button" class="nav sl" aria-current="{{p.current}}" onClick="{{p.pick}}"><span class="msr" aria-hidden="true">{{p.icon}}</span><span style="flex: 1;">{{p.label}}</span><span style="font: 500 12px/16px Roboto, sans-serif;">{{p.badge}}</span></button>
+      </sc-if>
+    </sc-for>
+
+    <sc-if value="{{mapsOpen}}" hint-placeholder-val="{{true}}">
+      <div role="radiogroup" aria-label="Maps" style="display: flex; flex-direction: column; gap: 4px; margin: 4px 0 4px 40px;">
+        <sc-for list="{{maps}}" as="m" hint-placeholder-count="3">
+          <button type="button" role="radio" aria-checked="{{m.checked}}" class="sl" onClick="{{m.pick}}" style="display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 12px; border: 0; border-radius: 16px; background: {{m.bg}}; color: var(--wl-on-surf); text-align: left; font: 400 14px/20px Roboto, sans-serif;">
+            <span class="msr" aria-hidden="true" style="font-size: 20px; color: var(--wl-primary);">{{m.icon}}</span>
+            <span style="flex: 1;">{{m.label}}</span>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <div style="height: 1px; background: var(--wl-outline-var); margin: 8px 16px;"></div>
+    <div class="head">Quick actions</div>
+    <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding: 0 4px;">
+      <button type="button" class="sl" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; border: 0; border-radius: 16px; background: var(--wl-surf-high); color: var(--wl-on-surf); font: 500 14px/20px Roboto, sans-serif; text-align: left;"><span class="msr" aria-hidden="true" style="color: var(--wl-primary);">fullscreen</span>Full screen</button>
+      <button type="button" class="sl" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; border: 0; border-radius: 16px; background: var(--wl-surf-high); color: var(--wl-on-surf); font: 500 14px/20px Roboto, sans-serif; text-align: left;"><span class="msr" aria-hidden="true" style="color: var(--wl-primary);">center_focus_strong</span>Reset camera</button>
+      <button type="button" class="sl" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; border: 0; border-radius: 16px; background: var(--wl-surf-high); color: var(--wl-on-surf); font: 500 14px/20px Roboto, sans-serif; text-align: left;"><span class="msr" aria-hidden="true" style="color: var(--wl-primary);">photo_camera</span>Screenshot</button>
+      <button type="button" class="sl" style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; border: 0; border-radius: 16px; background: var(--wl-surf-high); color: var(--wl-on-surf); font: 500 14px/20px Roboto, sans-serif; text-align: left;"><span class="msr" aria-hidden="true" style="color: var(--wl-primary);">refresh</span>Update map</button>
+    </div>
+    <div style="flex: 1;"></div>
+    <p style="margin: 16px 16px 4px; font: 400 12px/16px 'Roboto Mono', monospace; color: var(--wl-on-surf-var);">BlueMap 5.29</p>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["dark","light","contrast"],"default":"dark"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { open: 'maps', map: 'overworld' };
+  }
+  renderVals() {
+    const s = this.state;
+    const defs = [
+      { id: 'maps', icon: 'map', label: 'Maps', badge: '3' },
+      { id: 'markers', icon: 'location_on', label: 'Markers', href: 'Phone.dc.html' },
+      { id: 'settings', icon: 'tune', label: 'Settings', href: 'Settings.dc.html' },
+      { id: 'annotations', icon: 'edit_note', label: 'Shared annotations', badge: '' },
+      { id: 'info', icon: 'info', label: 'About this map', badge: '' }
+    ];
+    const pages = defs.map((d) => ({
+      ...d,
+      isLink: !!d.href,
+      isButton: !d.href,
+      current: s.open === d.id ? 'true' : 'false',
+      pick: () => this.setState({ open: s.open === d.id ? '' : d.id })
+    }));
+    const maps = [
+      { id: 'overworld', label: 'Heapandyville · overworld', icon: 'landscape' },
+      { id: 'nether', label: 'Heapandyville · nether', icon: 'local_fire_department' },
+      { id: 'end', label: 'Heapandyville · the end', icon: 'dark_mode' }
+    ].map((m) => ({
+      ...m,
+      checked: s.map === m.id ? 'true' : 'false',
+      bg: s.map === m.id ? 'var(--wl-surf-highest)' : 'transparent',
+      pick: () => this.setState({ map: m.id })
+    }));
+    return { theme: this.props.theme ?? 'dark', pages, maps, mapsOpen: s.open === 'maps' };
+  }
+}
+</script>
+</body>
+</html>

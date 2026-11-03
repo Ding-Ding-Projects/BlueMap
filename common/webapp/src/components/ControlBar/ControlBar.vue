@@ -1,14 +1,32 @@
 <template>
-  <VToolbar class="control-bar" density="comfortable" rounded="xl" elevation="2" role="toolbar" :aria-label="$t('menu.tooltip')">
-    <MenuButton :close="appState.menu.isOpen" :back="false" @action="appState.menu.reOpenPage()" :title="$t('menu.tooltip')" />
-    <div class="space thin-hide"></div>
-    <SvgButton v-if="appState.maps.length > 1" class="thin-hide" :title="$t('maps.tooltip')"
+  <!--
+    Contour layout: the map is the screen, and the controls float on it in separate opaque
+    clusters instead of one strip across the top. The menu and the map switch sit top-left, the
+    compass top-right, the camera position bottom-left, and everything that changes the view
+    sits in one floating toolbar at the bottom. On a phone the top row keeps menu, position and
+    compass, and the toolbar's actions are reached from the menu, as before.
+  -->
+  <div class="control-bar">
+    <VSheet class="cb-cluster cb-start" rounded="lg">
+      <MenuButton :close="appState.menu.isOpen" :back="false" @action="appState.menu.reOpenPage()" :title="$t('menu.tooltip')" />
+      <SvgButton class="thin-hide" v-if="appState.maps.length > 1" :title="$t('maps.tooltip')"
                @action="appState.menu.openPage('maps', $t('maps.title'))">
       <svg viewBox="0 0 30 30">
         <polygon points="26.708,22.841 19.049,25.186 11.311,20.718 3.292,22.841 7.725,5.96 13.475,4.814 19.314,7.409 25.018,6.037 "/>
       </svg>
     </SvgButton>
-    <SvgButton v-if="showMapMenu && showMarkerMenu" class="thin-hide" :title="$t('markers.tooltip')"
+    </VSheet>
+
+    <VSheet v-if="showMapMenu" class="cb-cluster cb-position" rounded="lg">
+      <PositionInput class="pos-input" />
+    </VSheet>
+
+    <VSheet v-if="showMapMenu" class="cb-cluster cb-compass" rounded="circle">
+      <Compass :title="$t('compass.tooltip')" />
+    </VSheet>
+
+    <VToolbar v-if="showMapMenu" class="cb-cluster cb-dock thin-hide" density="comfortable" rounded="xl" role="toolbar" :aria-label="$t('menu.tooltip')">
+      <SvgButton v-if="showMapMenu && showMarkerMenu" :title="$t('markers.tooltip')"
                @action="appState.menu.openPage('markers', $t('markers.title'), {markerSet: markers})">
       <svg viewBox="0 0 30 30">
         <path d="M15,3.563c-4.459,0-8.073,3.615-8.073,8.073c0,6.483,8.196,14.802,8.196,14.802s7.951-8.013,7.951-14.802
@@ -16,7 +34,7 @@
 			c2.263,0,4.098,1.835,4.098,4.098C19.098,13.899,17.263,15.734,15,15.734z"/>
       </svg>
     </SvgButton>
-    <SvgButton v-if="showMapMenu && !playerMarkerSet.fake" class="thin-hide" :title="$t('players.tooltip')" @action="openPlayerList">
+      <SvgButton v-if="showMapMenu && !playerMarkerSet.fake" :title="$t('players.tooltip')" @action="openPlayerList">
       <svg viewBox="0 0 30 30">
         <g>
           <path d="M8.95,14.477c0.409-0.77,1.298-1.307,2.164-1.309h0.026c-0.053-0.234-0.087-0.488-0.087-0.755
@@ -42,12 +60,10 @@
 		c0.331-0.213,0.451-0.666,0.269-1.016L19.932,15.058z"/>
       </svg>
     </SvgButton>
-    <div class="space thin-hide greedy"></div>
-    <DayNightSwitch v-if="showMapMenu" class="thin-hide" :title="$t('lighting.dayNightSwitch.tooltip')" />
-    <div class="space thin-hide"></div>
-    <ControlsSwitch v-if="showMapMenu && showViewControls" class="thin-hide"></ControlsSwitch>
-    <div class="space thin-hide" v-if ="showViewControls"></div>
-    <SvgButton v-if="showMapMenu" class="thin-hide" :title="$t('resetCamera.tooltip')" @action="$bluemap.resetCamera()">
+      <div v-if="showMarkerMenu || !playerMarkerSet.fake" class="cb-divider" aria-hidden="true"></div>
+      <DayNightSwitch :title="$t('lighting.dayNightSwitch.tooltip')" />
+      <ControlsSwitch v-if="showViewControls"></ControlsSwitch>
+      <SvgButton v-if="showMapMenu" :title="$t('resetCamera.tooltip')" @action="$bluemap.resetCamera()">
       <svg viewBox="0 0 30 30">
         <rect x="7.085" y="4.341" transform="matrix(0.9774 0.2116 -0.2116 0.9774 3.2046 -1.394)" width="2.063" height="19.875"/>
         <path d="M12.528,5.088c0,0,3.416-0.382,4.479-0.031c1.005,0.332,2.375,2.219,3.382,2.545c1.096,0.354,4.607-0.089,4.607-0.089
@@ -55,13 +71,12 @@
       L12.528,5.088z"/>
       </svg>
     </SvgButton>
-    <PositionInput v-if="showMapMenu" class="pos-input" />
-    <Compass v-if="showMapMenu" :title="$t('compass.tooltip')" />
-  </VToolbar>
+    </VToolbar>
+  </div>
 </template>
 
 <script>
-  import { VToolbar } from 'vuetify/components';
+  import { VSheet, VToolbar } from 'vuetify/components';
   import PositionInput from "./PositionInput.vue";
   import Compass from "./Compass.vue";
   import DayNightSwitch from "./DayNightSwitch.vue";
@@ -72,6 +87,7 @@
   export default {
     name: "ControlBar",
     components: {
+      VSheet,
       VToolbar,
       SvgButton,
       MenuButton,
@@ -133,71 +149,112 @@
 <style lang="scss">
 @import "/src/scss/variables.scss";
 
-  // The bar is an M3 elevated surface (surface-container + elevation-2) with
-  // rounded, floating button-group clusters, rather than one flat undifferentiated
-  // strip. Individual controls keep their own 48px touch targets (SvgButton);
-  // this level only supplies the bar's own chrome and inter-group dividers.
+  // The whole-screen layer stays transparent and lets the pointer through; each cluster paints
+  // its own opaque surface-container plane with level-2 elevation, so nothing on the map is
+  // ever read through a control and no control is ever read through another.
   .control-bar {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
+    pointer-events: none;
 
-    display: flex;
-    align-items: center;
-    gap: 4px;
-
-    background-color: var(--md-sys-color-surface-container);
-    box-shadow: var(--md-sys-elevation-2);
-    border-radius: $md-shape-l;
-
-    min-height: $md-touch-target;
-
-    margin: 0.5em;
-    width: calc(100% - 1em);
-    padding: 4px;
-    box-sizing: border-box;
-
-    .pos-input {
-      max-width: 20em;
-      width: 100%;
-    }
-
-    > :not(:first-child) {
-      border-left: solid 1px var(--md-sys-color-outline-variant);
-    }
-
-    .space {
-      width: 0.5em;
-      flex-shrink: 0;
-
-      &.greedy {
-        flex-grow: 1;
-      }
-    }
-
-    .space, .space + * {
-      border-left: none;
-    }
-
-    @media (max-width: $mobile-break) {
-      margin: 0;
-      width: 100%;
-      border-radius: 0;
+    .cb-cluster {
+      position: fixed;
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      box-sizing: border-box;
+      min-height: $md-touch-target;
 
       background-color: var(--md-sys-color-surface-container);
+      color: var(--md-sys-color-on-surface);
+      box-shadow: var(--md-sys-elevation-2);
+    }
+
+    .cb-start {
+      top: 16px;
+      left: 16px;
+    }
+
+    .cb-compass {
+      top: 16px;
+      right: 16px;
+      border-radius: $md-shape-full;
+    }
+
+    .cb-position {
+      bottom: 16px;
+      left: 16px;
+      padding: 4px 8px;
 
       .pos-input {
-        max-width: unset;
-      }
-
-      .thin-hide {
-        display: none;
-      }
-
-      .space {
-        width: 1px;
+        width: 18em;
+        max-width: calc(100vw - 32px);
       }
     }
 
+    // The floating toolbar: one pill, centred at the bottom, above the map and below any sheet.
+    .cb-dock {
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: auto;
+      max-width: calc(100vw - 32px);
+      flex: 0 0 auto;
+      padding: 4px 8px;
+      border-radius: $md-shape-xl;
+      box-shadow: var(--md-sys-elevation-3);
+
+      .v-toolbar__content {
+        gap: 4px;
+        height: auto !important;
+        padding: 0;
+      }
+    }
+
+    .cb-divider {
+      width: 1px;
+      height: 24px;
+      margin: 0 6px;
+      background-color: var(--md-sys-color-outline-variant);
+    }
+
+    // A desktop window narrow enough to collide with the position card lifts the toolbar above it.
+    @media (max-width: 900px) and (min-width: $mobile-break) {
+      .cb-dock {
+        bottom: calc(16px + #{$md-touch-target} + 24px);
+      }
+    }
+
+    // Phones: one top row of menu, position and compass. The view controls live in the menu,
+    // which already mirrors them for narrow displays.
+    @media (max-width: $mobile-break) {
+      .thin-hide {
+        display: none !important;
+      }
+
+      .cb-start {
+        top: 8px;
+        left: 8px;
+      }
+
+      .cb-compass {
+        top: 8px;
+        right: 8px;
+      }
+
+      .cb-position {
+        top: 8px;
+        bottom: auto;
+        left: calc(8px + #{$md-touch-target} + 8px + 8px);
+        right: calc(8px + #{$md-touch-target} + 8px + 8px);
+
+        .pos-input {
+          width: 100%;
+          max-width: unset;
+        }
+      }
+    }
   }
 </style>
