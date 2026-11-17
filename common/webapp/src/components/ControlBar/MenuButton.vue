@@ -18,6 +18,9 @@ import SvgButton from "./SvgButton.vue";
 export default {
   name: "MenuButton",
   components: {SvgButton},
+  // Declared so the parent's listener is not also attached to the inner button, which made the back
+  // button fire twice and close the whole menu from a sub-page.
+  emits: ['action'],
   props: {
     close: Boolean,
     back: Boolean,
