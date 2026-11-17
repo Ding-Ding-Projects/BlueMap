@@ -33,7 +33,7 @@ body{margin:0}
 </style>
 </helmet>
 <div data-wl-theme="{{theme}}" style="min-height: 900px; position: relative; overflow: hidden; background: var(--wl-bg); color: var(--wl-on-surf); font-family: Roboto, Helvetica, sans-serif; display: flex;">
-  <img src="/_blob/04f6b21208c7d88aaaa0bc6d4efe1bda" alt="The Heapandyville overworld rendered in 3D" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
+  <img src="/_blob/04f6b21208c7d88aaaa0bc6d4efe1bda" alt="The Example world overworld rendered in 3D" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;">
 
   <nav aria-labelledby="sheet-title" class="card" style="position: relative; margin: 12px; width: 360px; max-width: calc(100% - 24px); box-sizing: border-box; padding: 12px; border-radius: 28px; background: var(--wl-surf-low); box-shadow: 0 1px 2px rgba(0,0,0,.3), 0 2px 6px 2px rgba(0,0,0,.15); display: flex; flex-direction: column; gap: 2px; overflow-y: auto;">
     <div style="display: flex; align-items: center; gap: 8px; padding: 4px 0 8px 16px;">
@@ -97,9 +97,9 @@ class Component extends DCLogic {
       pick: () => this.setState({ open: s.open === d.id ? '' : d.id })
     }));
     const maps = [
-      { id: 'overworld', label: 'Heapandyville · overworld', icon: 'landscape' },
-      { id: 'nether', label: 'Heapandyville · nether', icon: 'local_fire_department' },
-      { id: 'end', label: 'Heapandyville · the end', icon: 'dark_mode' }
+      { id: 'overworld', label: 'Example world · overworld', icon: 'landscape' },
+      { id: 'nether', label: 'Example world · nether', icon: 'local_fire_department' },
+      { id: 'end', label: 'Example world · the end', icon: 'dark_mode' }
     ].map((m) => ({
       ...m,
       checked: s.map === m.id ? 'true' : 'false',
