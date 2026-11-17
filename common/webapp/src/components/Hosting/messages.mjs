@@ -53,5 +53,7 @@ view:['Show position','查看位置'],
 count:['Annotations','註記數量'],
 latest:['Shared version','共用版本'],
 mine:['Your version','你的版本'],
-recheck:['Check session','檢查登入狀態']};
+recheck:['Check session','檢查登入狀態'],
+mapNotConfigured:['Shared annotations are not configured for the map you are viewing.','你正在查看的地圖尚未設定共用註記。'],
+pendingSwitch:['You changed maps with unsaved edits. Save or discard them, then the panel follows the shown map.','你在有未儲存修改時切換了地圖。儲存或捨棄後，面板會跟隨目前顯示的地圖。']};
 export function hostingText(locale,key){const pair=pairs[key]??[key,key];return locale==='en-zh-HK'?pair.join(' / '):pair[locale==='zh-HK'?1:0];}

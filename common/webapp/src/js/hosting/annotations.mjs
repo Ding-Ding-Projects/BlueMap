@@ -3,11 +3,31 @@ export const SHARED_SET = 'worldlens:shared';
 export const clone = value => JSON.parse(JSON.stringify(value));
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const identityFields = ['projectId', 'mapId', 'dimension'];
+const cleanText = value => typeof value === 'string' && value.length > 0 && value.length <= 512 && ![...value].some(c => c.charCodeAt(0) < 32);
+export const MAX_CONFIGURED_MAPS = 64;
 export function hostingConfig(value) {
-  if (!object(value) || !identityFields.every(key => typeof value[key] === 'string' && value[key].length > 0 && value[key].length <= 512 && ![...value[key]].some(c => c.charCodeAt(0) < 32))) throw new Error('configuration');
+  if (!object(value) || !identityFields.every(key => cleanText(value[key]))) throw new Error('configuration');
   // A deployment may configure this exact relative route, never an external credential destination.
   if (value.apiPath !== undefined && value.apiPath !== '/bridge/annotations') throw new Error('configuration');
-  return Object.fromEntries(identityFields.map(key => [key, value[key]]));
+  const config = Object.fromEntries(identityFields.map(key => [key, value[key]]));
+  // Optional per-map dimensions. Without it the single configured map is used, exactly as before.
+  if (value.maps !== undefined) {
+    if (!object(value.maps)) throw new Error('configuration');
+    const entries = Object.entries(value.maps);
+    if (entries.length === 0 || entries.length > MAX_CONFIGURED_MAPS) throw new Error('configuration');
+    config.maps = Object.create(null);
+    for (const [mapId, entry] of entries) {
+      if (!cleanText(mapId) || !object(entry) || !cleanText(entry.dimension)) throw new Error('configuration');
+      config.maps[mapId] = { dimension: entry.dimension };
+    }
+  }
+  return config;
+}
+/** Identity for the shown map: the configured map for a single-map file, or the matching `maps` entry (else null). */
+export function identityForMap(config, mapId) {
+  if (!config.maps) return { projectId: config.projectId, mapId: config.mapId, dimension: config.dimension };
+  if (typeof mapId !== 'string' || !Object.hasOwn(config.maps, mapId)) return null;
+  return { projectId: config.projectId, mapId, dimension: config.maps[mapId].dimension };
 }
 const validPosition = p => object(p) && [p.x,p.y,p.z].every(Number.isFinite) && Math.abs(p.x)<=30000000 && Math.abs(p.z)<=30000000 && p.y>=-2048 && p.y<=2048;
 /** Component inputs may emit numeric strings; empty values remain invalid. */

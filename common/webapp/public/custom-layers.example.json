@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "updatedAt": "2026-11-17T18:00:00Z",
+  "layers": [
+    {
+      "id": "stations",
+      "label": "Example stations",
+      "description": "Sample station layer",
+      "icon": "train",
+      "colour": "#3f8ae0",
+      "defaultVisible": true,
+      "features": [
+        { "id": "a", "type": "point", "map": "world", "label": "Example station A", "detail": "Sample detail text", "position": { "x": 0, "y": 70, "z": 0 }, "tags": ["rail"] },
+        { "id": "b", "type": "point", "map": "world", "label": "Example station B", "position": { "x": 60, "y": 70, "z": 40 }, "tags": ["rail"] },
+        { "id": "line-1", "type": "line", "map": "world", "label": "Example line 1", "points": [{ "x": 0, "y": 70, "z": 0 }, { "x": 30, "y": 70, "z": 20 }, { "x": 60, "y": 70, "z": 40 }] }
+      ]
+    },
+    {
+      "id": "plots",
+      "label": "Example plots",
+      "icon": "plot",
+      "colour": "#3fb85a",
+      "defaultVisible": false,
+      "features": [
+        { "id": "plot-1", "type": "area", "map": "world", "label": "Example plot", "points": [{ "x": -20, "y": 70, "z": -60 }, { "x": 20, "y": 70, "z": -60 }, { "x": 20, "y": 70, "z": -40 }, { "x": -20, "y": 70, "z": -40 }] },
+        { "id": "tower-1", "type": "area", "map": "world", "label": "Example tower plot", "minY": 66, "maxY": 110, "points": [{ "x": 40, "y": 70, "z": -20 }, { "x": 70, "y": 70, "z": -20 }, { "x": 70, "y": 70, "z": 10 }] }
+      ]
+    }
+  ]
+}

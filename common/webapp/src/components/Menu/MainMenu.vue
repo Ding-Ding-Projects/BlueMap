@@ -11,6 +11,7 @@
       <SimpleButton :icon="icons.settings" @action="menu.openPage('settings', () => $t('settings.title'))" :submenu="true">{{ $t("settings.button") }}</SimpleButton>
       <SimpleButton :icon="icons.info" @action="menu.openPage('info', () => $t('info.title'))" :submenu="true">{{ $t("info.button") }}</SimpleButton>
       <SimpleButton :icon="icons.annotations" @action="menu.openPage('shared-annotations', () => hostingLabel)" :submenu="true">{{ hostingLabel }}</SimpleButton>
+      <SimpleButton v-if="customLayers.available" :icon="icons.layers" @action="menu.openPage('custom-layers', () => layersLabel)" :submenu="true">{{ layersLabel }}</SimpleButton>
       <div v-if="$bluemap.mapViewer.data.map" class="menu-view-controls">
         <Compass :title="$t('compass.tooltip')" />
         <DayNightSwitch :title="$t('lighting.dayNightSwitch.tooltip')" />
@@ -30,6 +31,7 @@
     <MarkerSetMenu v-if="menu.currentPage().id === 'markers'" :menu="menu" />
 
     <SharedAnnotations v-show="menu.currentPage().id === 'shared-annotations'" />
+    <CustomLayers v-show="menu.currentPage().id === 'custom-layers'" />
     <SettingsMenu v-if="menu.currentPage().id === 'settings'" />
 
     <div class="info-content" v-if="menu.currentPage().id === 'info'" v-html="$t('info.content', {
@@ -44,6 +46,9 @@ import Compass from '../ControlBar/Compass.vue';
 import DayNightSwitch from '../ControlBar/DayNightSwitch.vue';
 import ControlsSwitch from '../ControlBar/ControlsSwitch.vue';
 import SharedAnnotations from '../Hosting/SharedAnnotations.vue';
+import CustomLayers from '../Hosting/CustomLayers.vue';
+import { customLayersState } from '../../js/hosting/customLayersStore.js';
+import { layerText } from '../Hosting/layerMessages.mjs';
 import { hostingText } from '../Hosting/messages.mjs';
 import SideMenu from "./SideMenu.vue";
 import SimpleButton from "./SimpleButton.vue";
@@ -55,7 +60,7 @@ import { MENU_ICONS } from "../../js/MenuIcons.js";
 
 export default {
   name: "MainMenu",
-  components: {Compass, DayNightSwitch, ControlsSwitch, SharedAnnotations, MapButton, MarkerSetMenu, SettingsMenu, SimpleButton, SideMenu},
+  components: {Compass, DayNightSwitch, ControlsSwitch, SharedAnnotations, CustomLayers, MapButton, MarkerSetMenu, SettingsMenu, SimpleButton, SideMenu},
   props: {
     menu: MainMenu
   },
@@ -64,9 +69,10 @@ export default {
       appState: this.$bluemap.appState,
       markers: this.$bluemap.mapViewer.markers.data,
       icons: MENU_ICONS,
+      customLayers: customLayersState,
     }
   },
-  computed: { hostingLabel() { return hostingText(this.$i18n.locale, "title"); } },
+  computed: { layersLabel() { return layerText(this.$i18n.locale, "title"); }, hostingLabel() { return hostingText(this.$i18n.locale, "title"); } },
   methods: {
     goFullscreen() {
       document.body.requestFullscreen();
