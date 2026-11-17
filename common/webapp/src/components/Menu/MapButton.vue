@@ -44,8 +44,9 @@ export default {
   align-items: center;
   gap: 0.75em;
 
-  min-height: $md-touch-target;
-  padding: 0 1em;
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: $md-shape-xl;
 
   font-size: var(--md-sys-typescale-body-large-size);
     line-height: var(--md-sys-typescale-body-large-line);
@@ -96,12 +97,17 @@ export default {
     opacity: $md-state-pressed;
   }
 
+  // The map's sky colour as a 16 px swatch with a hairline ring, so even a dark sky reads on a
+  // dark sheet. The bullet glyph carries the colour and is hidden; the swatch is decorative.
   .sky {
-    flex-shrink: 0;
+    flex: 0 0 16px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
     border-radius: $md-shape-full;
-
-    width: 0.6em;
-    height: 0.6em;
+    font-size: 0;
+    background-color: currentColor;
+    box-shadow: 0 0 0 1px var(--md-sys-color-outline);
   }
 
   .name {

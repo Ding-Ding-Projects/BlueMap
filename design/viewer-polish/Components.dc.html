@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Viewer components</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Quicksand,system-ui,sans-serif}
+.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.col{width:680px;box-sizing:border-box;padding:32px;display:flex;flex-direction:column;gap:24px}
+.dark{--bg:#111318;--card:#1d2024;--on:#e2e2e6;--var:#c3c6cf;--line:#43474e;--pc:#004488;--opc:#d5e3ff;--pr:#a9c7ff;background:#111318;color:#e2e2e6}
+.light{--bg:#faf9fd;--card:#eeedf1;--on:#1a1c1e;--var:#43474e;--line:#c3c6cf;--pc:#d5e3ff;--opc:#001b3c;--pr:#1a5ba8;background:#faf9fd;color:#1a1c1e}
+h3{margin:0;font-size:12px;line-height:16px;letter-spacing:.5px;text-transform:uppercase;font-weight:500;color:var(--var)}
+.b{width:48px;height:48px;border:0;border-radius:24px;background:transparent;color:var(--on);display:grid;place-items:center}
+.b.on{background:var(--pc);color:var(--opc)}
+.b.focus{outline:3px solid var(--pr);outline-offset:2px}
+.card{background:var(--card);border-radius:28px;box-shadow:0 1px 3px #0006;display:flex;align-items:center;gap:4px;padding:4px 8px}
+.seg{display:flex;height:48px;border:1px solid var(--var);border-radius:24px;overflow:hidden;font-size:14px;font-weight:500;width:100%}
+.seg div{flex:1;display:grid;place-items:center}
+.seg .s{background:var(--pc);color:var(--opc)}
+.skel{height:16px;border-radius:8px;background:linear-gradient(90deg,var(--line),var(--card),var(--line));background-size:200% 100%}
+</style>
+</helmet>
+<div style="display:flex;width:1440px;height:900px">
+  <div class="col dark">
+    <h3>Dark: buttons and chips</h3>
+    <div style="display:flex;gap:12px;align-items:center">
+      <button class="b" aria-label="Default"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="b on" aria-label="Selected" aria-pressed="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg></button>
+      <button class="b focus" aria-label="Keyboard focus ring: 3 px primary, 2 px offset"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/></svg></button>
+      <div class="card" style="height:48px;border-radius:24px;padding:0 8px 0 16px;gap:10px;font-size:15px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l6 2 5-2v14l-5 2-6-2-5 2V6z"/></svg>world<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></div>
+    </div>
+    <h3>Segmented group (labelled)</h3>
+    <div class="seg"><div class="s">Perspective</div><div style="border-left:1px solid var(--var)">Flat</div><div style="border-left:1px solid var(--var)">Free</div></div>
+    <h3>Sheet header and list rows</h3>
+    <div style="background:#191c20;border-radius:28px;overflow:hidden">
+      <div style="height:64px;display:flex;align-items:center;gap:8px;padding:0 8px;border-bottom:1px solid var(--line)"><button class="b" aria-label="Back"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><span style="flex:1;font-size:22px;line-height:28px">Maps</span><button class="b" aria-label="Close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div style="padding:8px"><div style="height:56px;border-radius:28px;display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--pc);color:var(--opc)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>world</div><div style="height:56px;display:flex;align-items:center;gap:16px;padding:0 16px;margin-top:2px"><span style="width:24px"></span>world_nether</div></div>
+    </div>
+    <h3>Tooltip, loading, empty</h3>
+    <div style="display:flex;gap:16px;align-items:flex-start">
+      <div style="background:#e2e2e6;color:#111318;font-size:12px;line-height:16px;font-weight:500;padding:4px 8px;border-radius:4px">Flat view</div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px"><div class="skel" style="width:70%"></div><div class="skel" style="width:90%"></div><div class="skel" style="width:50%"></div></div>
+      <div style="flex:1;text-align:center;color:var(--var);font-size:14px;line-height:20px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width:32px;height:32px"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/></svg><div>No markers on this map yet</div></div>
+    </div>
+  </div>
+  <div class="col light">
+    <h3>Light: buttons and chips</h3>
+    <div style="display:flex;gap:12px;align-items:center">
+      <button class="b" aria-label="Default"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+      <button class="b on" aria-label="Selected" aria-pressed="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg></button>
+      <button class="b focus" aria-label="Keyboard focus ring"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/></svg></button>
+      <div class="card" style="height:48px;border-radius:24px;padding:0 8px 0 16px;gap:10px;font-size:15px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l6 2 5-2v14l-5 2-6-2-5 2V6z"/></svg>world<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></div>
+    </div>
+    <h3>Segmented group (labelled)</h3>
+    <div class="seg"><div class="s">Perspective</div><div style="border-left:1px solid var(--var)">Flat</div><div style="border-left:1px solid var(--var)">Free</div></div>
+    <h3>Dock, light, selected state readable</h3>
+    <div class="card" style="align-self:flex-start;height:56px;border-radius:28px"><button class="b" aria-label="Markers"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button><div style="width:1px;height:24px;background:var(--line);margin:0 6px"></div><button class="b" aria-label="Night"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button><button class="b on" aria-label="Flat" aria-pressed="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg></button></div>
+    <h3>Coordinates card</h3>
+    <div class="card" style="align-self:flex-start;height:56px;border-radius:16px;padding:0 20px;gap:20px"><div><div style="font-size:11px;line-height:12px;color:var(--var)">X</div><div style="font-size:16px;line-height:22px">-2</div></div><div style="width:1px;height:28px;background:var(--line)"></div><div><div style="font-size:11px;line-height:12px;color:var(--var)">Z</div><div style="font-size:16px;line-height:22px">-50</div></div></div>
+    <h3>Motion</h3>
+    <p style="margin:0;font-size:14px;line-height:20px;color:var(--var)">Sheet and menu transitions use opacity plus 8 px slide over 300 ms with the standard decelerate curve. Under reduced motion they switch instantly. Contrast: all text and icons at least 4.5:1, selected chip 7:1 or better in both themes.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>

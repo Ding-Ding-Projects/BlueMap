@@ -6,15 +6,20 @@
     sits in one floating toolbar at the bottom. On a phone the top row keeps menu, position and
     compass, and the toolbar's actions are reached from the menu, as before.
   -->
-  <div class="control-bar">
+  <div class="control-bar" :class="{'menu-open': appState.menu.isOpen, 'free-flight': appState.controls.state === 'free'}">
     <VSheet class="cb-cluster cb-start" rounded="lg">
       <MenuButton :close="appState.menu.isOpen" :back="false" @action="appState.menu.reOpenPage()" :title="$t('menu.tooltip')" />
-      <SvgButton class="thin-hide" v-if="appState.maps.length > 1" :title="$t('maps.tooltip')"
-               @action="appState.menu.openPage('maps', $t('maps.title'))">
-      <svg viewBox="0 0 30 30">
-        <polygon points="26.708,22.841 19.049,25.186 11.311,20.718 3.292,22.841 7.725,5.96 13.475,4.814 19.314,7.409 25.018,6.037 "/>
-      </svg>
-    </SvgButton>
+      <VBtn v-if="showMapMenu && appState.maps.length > 1" class="map-chip" variant="text" rounded="pill"
+            :aria-label="$t('maps.tooltip')" @click="appState.menu.openPage('maps', $t('maps.title'))">
+        <svg class="map-chip__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l6 2 5-2v14l-5 2-6-2-5 2V6z"/></svg>
+        <span class="map-chip__name">{{ currentMapName }}</span>
+        <svg class="map-chip__chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg>
+        <VTooltip activator="parent" location="bottom" open-delay="250" :text="$t('maps.tooltip')" />
+      </VBtn>
+      <div v-else-if="showMapMenu && currentMapName" class="map-chip map-chip--static">
+        <svg class="map-chip__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l6 2 5-2v14l-5 2-6-2-5 2V6z"/></svg>
+        <span class="map-chip__name">{{ currentMapName }}</span>
+      </div>
     </VSheet>
 
     <VSheet v-if="showMapMenu" class="cb-cluster cb-position" rounded="lg">
@@ -25,7 +30,7 @@
       <Compass :title="$t('compass.tooltip')" />
     </VSheet>
 
-    <VToolbar v-if="showMapMenu" class="cb-cluster cb-dock thin-hide" density="comfortable" rounded="xl" role="toolbar" :aria-label="$t('menu.tooltip')">
+    <VToolbar v-if="showMapMenu" class="cb-cluster cb-dock" density="comfortable" rounded="xl" role="toolbar" :aria-label="$t('menu.tooltip')">
       <SvgButton v-if="showMapMenu && showMarkerMenu" :title="$t('markers.tooltip')"
                @action="appState.menu.openPage('markers', $t('markers.title'), {markerSet: markers})">
       <svg viewBox="0 0 30 30">
@@ -76,7 +81,7 @@
 </template>
 
 <script>
-  import { VSheet, VToolbar } from 'vuetify/components';
+  import { VBtn, VSheet, VToolbar, VTooltip } from 'vuetify/components';
   import PositionInput from "./PositionInput.vue";
   import Compass from "./Compass.vue";
   import DayNightSwitch from "./DayNightSwitch.vue";
@@ -87,8 +92,10 @@
   export default {
     name: "ControlBar",
     components: {
+      VBtn,
       VSheet,
       VToolbar,
+      VTooltip,
       SvgButton,
       MenuButton,
       ControlsSwitch,
@@ -116,6 +123,12 @@
           markers: [],
           fake: true,
         }
+      },
+      currentMapName() {
+        if (!this.mapViewer.map) return "";
+        const id = this.mapViewer.map.id;
+        const entry = this.appState.maps.find(m => m.id === id);
+        return entry && entry.name ? entry.name : id;
       },
       showMapMenu() {
         return this.mapViewer.mapState === "loading" || this.mapViewer.mapState === "loaded";
@@ -219,24 +232,97 @@
       margin: 0 6px;
       background-color: var(--md-sys-color-outline-variant);
     }
+    // Map name chip: the current map and a one-tap route to the map list.
+    .map-chip {
+      height: $md-touch-target;
+      min-width: 0;
+      max-width: 14em;
+      padding: 0 12px 0 14px;
+      gap: 8px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: $md-shape-full;
+      font-size: var(--md-sys-typescale-label-large-size);
+      line-height: var(--md-sys-typescale-label-large-line);
+      font-weight: var(--md-sys-typescale-label-large-weight);
+      letter-spacing: var(--md-sys-typescale-label-large-tracking);
+      text-transform: none;
+      color: var(--md-sys-color-on-surface);
+
+      &--static {
+        padding-right: 16px;
+      }
+
+      &__icon, &__chevron {
+        width: 24px;
+        height: 24px;
+        flex: 0 0 24px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.8;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      &__name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
+    // Selected view controls get a primary-container pill whose icon always passes contrast.
+    .controls-switch .v-btn,
+    .day-night-switch {
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
+    .controls-switch .v-btn.v-btn--active {
+      background-color: var(--md-sys-color-primary-container);
+      color: var(--md-sys-color-on-primary-container);
+    }
+
+    // The sheet holds the left edge while it is open, so the coordinates card steps beside it and
+    // the toolbar centres in the space that is left. Where there is no room for both, the card
+    // yields (it is still in the sheet's own position controls).
+    &.menu-open .cb-position {
+      left: calc(24px + 22em + 16px);
+    }
+
+    &.menu-open .cb-dock {
+      left: calc(50% + 190px);
+    }
+
+    @media (max-width: 1180px) and (min-width: $mobile-break) {
+      &.menu-open .cb-position {
+        display: none;
+      }
+
+      &.menu-open .cb-dock {
+        left: calc(50% + 190px);
+      }
+    }
 
     // A desktop window narrow enough to collide with the position card lifts the toolbar above it.
     @media (max-width: 900px) and (min-width: $mobile-break) {
       .cb-dock {
         bottom: calc(16px + #{$md-touch-target} + 24px);
       }
+
     }
 
-    // Phones: one top row of menu, position and compass. The view controls live in the menu,
-    // which already mirrors them for narrow displays.
+    // Phones: top row of menu + map chip and compass, a second row with the coordinates, and the
+    // toolbar kept at the bottom (hidden only in free flight, where the touch controls need the
+    // space).
     @media (max-width: $mobile-break) {
-      .thin-hide {
-        display: none !important;
-      }
-
       .cb-start {
         top: 8px;
         left: 8px;
+        max-width: calc(100vw - 8px - 8px - 56px - 8px);
+      }
+
+      .map-chip {
+        max-width: calc(100vw - 8px - 56px - 8px - 56px - 8px - 24px);
       }
 
       .cb-compass {
@@ -245,15 +331,29 @@
       }
 
       .cb-position {
-        top: 8px;
+        top: calc(8px + #{$md-touch-target} + 8px + 8px);
         bottom: auto;
-        left: calc(8px + #{$md-touch-target} + 8px + 8px);
-        right: calc(8px + #{$md-touch-target} + 8px + 8px);
+        left: 8px;
+        right: calc(8px + 56px + 8px);
 
         .pos-input {
           width: 100%;
           max-width: unset;
         }
+      }
+
+      &.menu-open .cb-position {
+        display: flex;
+        left: 8px;
+      }
+
+      .cb-dock {
+        bottom: 8px;
+        max-width: calc(100vw - 16px);
+      }
+
+      &.free-flight .cb-dock {
+        display: none;
       }
     }
   }

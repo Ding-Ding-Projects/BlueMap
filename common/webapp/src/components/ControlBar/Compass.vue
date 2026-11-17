@@ -1,23 +1,24 @@
 <template>
-  <VBtn icon variant="text" class="compass" :title="title" :aria-label="title" @click="action">
+  <VBtn icon variant="text" class="compass" :aria-label="title" @click="action">
     <svg viewBox="0 0 30 30" :style="style">
       <path class="north" d="M14.792,1.04c0.114-0.354,0.299-0.354,0.412,0l4.089,12.729c0.114,0.353-0.097,0.642-0.468,0.642
         l-7.651,0.001c-0.371,0-0.581-0.288-0.468-0.642L14.792,1.04z"/>
       <path class="south" d="M10.707,16.23c-0.114-0.353,0.097-0.642,0.468-0.642l7.651-0.001c0.371,0,0.581,0.289,0.468,0.642
         l-4.086,12.73c-0.113,0.353-0.299,0.353-0.412,0L10.707,16.23z"/>
     </svg>
+    <VTooltip v-if="title" activator="parent" location="bottom" open-delay="250" :text="title" />
   </VBtn>
 </template>
 
 <script>
   import {animate, EasingFunctions} from "../../js/util/Utils";
-  import { VBtn } from 'vuetify/components';
+  import { VBtn, VTooltip } from 'vuetify/components';
 
 
 
   export default {
     name: "Compass",
-    components: {VBtn},
+    components: {VBtn, VTooltip},
     props: {
       title: String,
     },

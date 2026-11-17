@@ -6,7 +6,7 @@
             @close="menu.closeAll()">
 
     <div v-if="menu.currentPage().id === 'root'">
-      <SimpleButton :icon="icons.map" @action="menu.openPage('maps', () => $t('maps.title'))" :submenu="true">{{ $t("maps.button") }}</SimpleButton>
+      <SimpleButton :icon="icons.map" @action="menu.openPage('maps', () => $t('maps.title'))" :submenu="true" :hint="currentMapName">{{ $t("maps.button") }}</SimpleButton>
       <SimpleButton :icon="icons.markers" @action="menu.openPage('markers', () => $t('markers.title'), {markerSet: markers})" :submenu="true">{{ $t("markers.button") }}</SimpleButton>
       <SimpleButton :icon="icons.settings" @action="menu.openPage('settings', () => $t('settings.title'))" :submenu="true">{{ $t("settings.button") }}</SimpleButton>
       <SimpleButton :icon="icons.info" @action="menu.openPage('info', () => $t('info.title'))" :submenu="true">{{ $t("info.button") }}</SimpleButton>
@@ -72,7 +72,7 @@ export default {
       customLayers: customLayersState,
     }
   },
-  computed: { layersLabel() { return layerText(this.$i18n.locale, "title"); }, hostingLabel() { return hostingText(this.$i18n.locale, "title"); } },
+  computed: { currentMapName() { const map = this.$bluemap.mapViewer.data.map; if (!map) return ''; const entry = this.appState.maps.find(m => m.id === map.id); return entry && entry.name ? entry.name : map.id; }, layersLabel() { return layerText(this.$i18n.locale, "title"); }, hostingLabel() { return hostingText(this.$i18n.locale, "title"); } },
   methods: {
     goFullscreen() {
       document.body.requestFullscreen();
@@ -82,7 +82,9 @@ export default {
 </script>
 
 <style lang="scss">
-.menu-view-controls { display:flex; flex-wrap:wrap; gap:4px; padding:8px; }
+// The view controls sit in one outlined row of 48 px targets, evenly spread.
+.menu-view-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px; margin: 8px 16px; padding: 4px; border: 1px solid var(--md-sys-color-outline-variant); border-radius: 28px; }
+.menu-view-controls .controls-switch .v-btn.v-btn--active { background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); }
 @import "../../scss/variables.scss";
 
 .info-content {

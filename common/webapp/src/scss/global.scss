@@ -160,6 +160,36 @@ input {
   background: var(--md-sys-color-outline);
 }
 
+// Tooltips and menus are teleported out of #app; keep them above the shell layer (z-index 10000).
+.v-overlay-container .v-overlay {
+  z-index: 20000 !important;
+}
+
+.v-tooltip > .v-overlay__content {
+  background-color: var(--md-sys-color-inverse-surface, #e2e2e6);
+  color: var(--md-sys-color-inverse-on-surface, #2f3033);
+  font-size: var(--md-sys-typescale-label-medium-size);
+  line-height: var(--md-sys-typescale-label-medium-line);
+  font-weight: var(--md-sys-typescale-label-medium-weight);
+  letter-spacing: var(--md-sys-typescale-label-medium-tracking);
+  padding: 4px 8px;
+  border-radius: $md-shape-xs;
+}
+
+// One visible keyboard focus ring for every control: 3 px primary with a 2 px gap. List rows
+// inside the clipped side sheet draw it inward so the sheet's rounded edge never cuts it.
+.v-btn:focus-visible,
+[role="button"]:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--md-sys-color-primary);
+  outline-offset: 2px;
+}
+
+.side-menu .v-list-item:focus-visible,
+.side-menu [role="button"]:focus-visible {
+  outline-offset: -3px;
+}
+
 //app-error
 #bm-app-err {
   position: relative;

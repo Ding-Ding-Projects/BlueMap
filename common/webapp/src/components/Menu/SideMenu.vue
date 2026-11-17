@@ -79,22 +79,36 @@ export default {
   }
   color: var(--md-sys-color-on-surface);
 
-  &-enter-active, &-leave-active {
-    transition: opacity $md-duration-long $md-easing-standard;
+  &-enter-active {
+    transition: opacity $md-duration-medium-2 $md-easing-standard-decelerate,
+                transform $md-duration-medium-2 $md-easing-emphasized-decelerate;
+  }
+
+  &-leave-active {
+    transition: opacity $md-duration-short-4 $md-easing-standard-accelerate,
+                transform $md-duration-short-4 $md-easing-standard-accelerate;
   }
 
   @media (prefers-reduced-motion: reduce) {
     &-enter-active, &-leave-active {
       transition: none;
     }
+
   }
 
-  &-enter, &-leave-to {
+  &-enter-from, &-leave-to {
     opacity: 0;
+    transform: translateX(-16px);
     pointer-events: none;
 
     * {
       pointer-events: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &-enter-from, &-leave-to {
+      transform: none;
     }
   }
 
@@ -103,11 +117,8 @@ export default {
     top: 0;
     left: 0;
 
-    margin: 0.5em;
-
-    @media (max-width: $mobile-break) {
-      margin: 0;
-    }
+    // 8 px inset puts a 48 px button in the centre of the 64 px header on every width.
+    margin: 8px;
 
     &.full-close {
       right: 0;
@@ -121,16 +132,21 @@ export default {
     font-size: var(--md-sys-typescale-title-large-size);
     line-height: var(--md-sys-typescale-title-large-line);
     font-weight: 500;
-    text-align: center;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    height: 64px;
+    display: flex;
+    align-items: center;
     color: var(--md-sys-color-on-surface);
 
     background-color: inherit;
     border-bottom: solid 1px var(--md-sys-color-outline-variant);
 
-    padding: 0.5em;
-    @media (max-width: $mobile-break) {
-      padding: 0;
-    }
+    // Clear of the 48 px leading button, and of the trailing close button when present.
+    padding: 0 64px;
   }
 
   > .content {
@@ -141,10 +157,7 @@ export default {
 
     padding: 0.5em;
 
-    height: calc(100% - 4em - 1px);
-    @media (max-width: $mobile-break) {
-      height: calc(100% - 3em - 1px);
-    }
+    height: calc(100% - 64px - 1px);
 
     hr {
       // A divider is a hairline in the outline-variant role, not a 2px slab in a

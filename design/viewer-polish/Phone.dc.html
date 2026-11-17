@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Viewer phone map</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Quicksand,system-ui,sans-serif}
+.ic{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card{position:absolute;background:#1d2024;border-radius:24px;box-shadow:0 1px 3px #0008;color:#e2e2e6;display:flex;align-items:center}
+.btn{width:48px;height:48px;border:0;border-radius:24px;background:transparent;color:#e2e2e6;display:grid;place-items:center}
+</style>
+</helmet>
+<div style="position:relative;width:390px;height:844px;overflow:hidden;background:linear-gradient(170deg,#3e7a46 0%,#6e8a58 35%,#274f79 70%,#1b3d63 100%)">
+  <!-- top row: menu, map chip (replaces the cramped coordinate fields), compass -->
+  <div class="card" style="top:8px;left:8px;width:48px;height:48px"><button class="btn" aria-label="Open menu"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div>
+  <div class="card" style="top:8px;left:64px;right:64px;height:48px;padding:0 8px 0 16px;gap:10px;font-size:15px"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4l6 2 5-2v14l-5 2-6-2-5 2V6z"/></svg><span style="flex:1">world</span><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5"/></svg></div>
+  <div class="card" style="top:8px;right:8px;width:48px;height:48px;justify-content:center"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l4 9h-8z"/><path d="M12 21l-4-9h8z" style="opacity:.45"/></svg></div>
+  <!-- zoom -->
+  <div class="card" style="top:64px;right:4px;width:56px;border-radius:16px;padding:4px;flex-direction:column;gap:4px"><button class="btn" aria-label="Zoom in"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button><button class="btn" aria-label="Zoom out"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button></div>
+  <!-- coordinates card, bottom left, compact -->
+  <div class="card" style="left:8px;bottom:80px;height:48px;padding:0 16px;gap:16px;border-radius:16px;font-size:14px"><span><span style="color:#c3c6cf;font-size:11px">X </span>-2</span><span style="width:1px;height:24px;background:#43474e"></span><span><span style="color:#c3c6cf;font-size:11px">Z </span>-50</span></div>
+  <!-- bottom dock now visible on phone: five controls = 240 px, fits at 360 -->
+  <div class="card" style="left:50%;transform:translateX(-50%);bottom:8px;height:56px;padding:4px 8px;gap:4px;border-radius:28px;box-shadow:0 2px 6px #0009">
+    <button class="btn" aria-label="Markers"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.5 7-11a7 7 0 10-14 0c0 4.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg></button>
+    <button class="btn" aria-label="Night"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 019.5 4 8 8 0 1020 14.5z"/></svg></button>
+    <button class="btn" aria-label="Flat view" aria-pressed="true" style="background:#004488;color:#d5e3ff"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/></svg></button>
+    <button class="btn" aria-label="Reset camera"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/></svg></button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic { renderVals() { return {}; } }
+</script>
+</body>
+</html>
