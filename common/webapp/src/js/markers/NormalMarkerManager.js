@@ -24,6 +24,10 @@
  */
 import { MarkerManager } from "./MarkerManager";
 import { PLAYER_MARKER_SET_ID } from "./PlayerMarkerManager";
+import { CUSTOM_LAYERS_SET } from "../hosting/customLayers.mjs";
+
+// Marker sets owned by the viewer itself; a refresh of the server's marker file must never remove them.
+const VIEWER_SETS = [PLAYER_MARKER_SET_ID, "bm-popup-set", "worldlens:shared", CUSTOM_LAYERS_SET];
 
 export class NormalMarkerManager extends MarkerManager {
 
@@ -44,12 +48,12 @@ export class NormalMarkerManager extends MarkerManager {
      * @returns {boolean}
      */
     updateFromData(markerData) {
-        this.root.updateMarkerSetsFromData(markerData, [PLAYER_MARKER_SET_ID, "bm-popup-set", "worldlens:shared"]);
+        this.root.updateMarkerSetsFromData(markerData, VIEWER_SETS);
         return true;
     }
 
     clear() {
-        this.root.updateMarkerSetsFromData({}, [PLAYER_MARKER_SET_ID, "bm-popup-set", "worldlens:shared"]);
+        this.root.updateMarkerSetsFromData({}, VIEWER_SETS);
     }
 
 }

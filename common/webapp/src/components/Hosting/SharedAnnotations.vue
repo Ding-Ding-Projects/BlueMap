@@ -1,6 +1,8 @@
 <template>
   <section class="shared-annotations" :aria-label="t('title')" @keydown.stop @keyup.stop @pointerdown.stop @wheel.stop>
     <VAlert v-if="message" variant="tonal" role="status" aria-live="polite">{{ t(message) }}</VAlert>
+    <VAlert v-if="notConfigured" variant="tonal" role="status">{{ t('mapNotConfigured') }}</VAlert>
+    <VAlert v-if="pendingSwitch" variant="tonal" role="status">{{ t('pendingSwitch') }}</VAlert>
     <template v-if="identity">
       <p>{{ identity.mapId }} · {{ identity.dimension }}</p><p>{{ t('recovery') }}</p>
       <VAlert v-if="!matchingMap">{{ t('wrongMap') }}</VAlert>
@@ -53,28 +55,44 @@
 import { VAlert,VBtn,VTextField,VTextarea,VSelect,VSwitch,VList,VListItem,VCard,VCardText,VRadioGroup,VRadio } from 'vuetify/components';
 import { markRaw } from 'vue';
 import { MarkerSet } from '../../js/markers/MarkerSet';
-import { hostingConfig,client,clone,markerFromForm,validMarker,mergeAnnotations,viewerMarker,SHARED_SET } from '../../js/hosting/annotations.mjs';
+import { hostingConfig,identityForMap,client,clone,markerFromForm,validMarker,mergeAnnotations,viewerMarker,SHARED_SET } from '../../js/hosting/annotations.mjs';
 import { hostingText } from './messages.mjs';
 export default {
   components:{VAlert,VBtn,VTextField,VTextarea,VSelect,VSwitch,VList,VListItem,VCard,VCardText,VRadioGroup,VRadio},
-  data(){return {identity:null,api:null,message:'',busy:false,signedIn:false,readOnly:false,username:'',password:'',base:null,draft:[],current:null,choices:Object.create(null),form:null,original:'',selected:null,removing:false,layer:null,axes:['x','y','z'],viewer:this.$bluemap.mapViewer.data};},
+  data(){return {config:null,notConfigured:false,pendingSwitch:false,identity:null,api:null,message:'',busy:false,signedIn:false,readOnly:false,username:'',password:'',base:null,draft:[],current:null,choices:Object.create(null),form:null,original:'',selected:null,removing:false,layer:null,axes:['x','y','z'],viewer:this.$bluemap.mapViewer.data};},
   computed:{
+    currentMapId(){return this.viewer.map?.id;},
     matchingMap(){return this.viewer.map?.id===this.identity?.mapId;},
     dirty(){return !!this.base && JSON.stringify(this.draft)!==JSON.stringify(this.base.annotations);},
     formDirty(){return !!this.form && JSON.stringify(this.form)!==this.original;},
     kinds(){return ['poi','line','shape','extrude'].map(value=>({value,title:this.t(value)}));},
     mergeResult(){return this.current?mergeAnnotations(this.base.annotations,this.draft,this.current.annotations,this.choices):{conflicts:[],unresolved:[]};},
   },
-  watch:{draft:{handler(){this.renderMarkers();},deep:true},matchingMap(){this.renderMarkers();}},
+  watch:{draft:{handler(){this.renderMarkers();},deep:true},matchingMap(){this.renderMarkers();},
+    currentMapId(){if(this.config?.maps)this.activateMap();},
+    dirty(value){if(!value&&this.pendingSwitch)this.activateMap();},
+    busy(value){if(!value&&this.pendingSwitch)this.activateMap();},
+    formDirty(value){if(!value&&this.pendingSwitch)this.activateMap();}},
   async mounted(){
     this.onLeave=event=>{if(this.dirty||this.formDirty){event.preventDefault();event.returnValue='';}};window.addEventListener('beforeunload',this.onLeave);
     try{const response=await fetch(new URL('worldlens-hosting.json',document.baseURI),{credentials:'same-origin',cache:'no-store',redirect:'error',signal:AbortSignal.timeout(15000)});
       if(response.status===404){this.message='standalone';return;}if(!response.ok)throw new Error('unavailable');
-      this.identity=hostingConfig(await response.json());this.api=markRaw(client(this.identity));this.layer=markRaw(new MarkerSet(SHARED_SET));this.$bluemap.mapViewer.markers.add(this.layer);await this.checkSession();
+      this.config=hostingConfig(await response.json());this.layer=markRaw(new MarkerSet(SHARED_SET));this.$bluemap.mapViewer.markers.add(this.layer);
+      if(this.config.maps){await this.activateMap();}else{this.identity=identityForMap(this.config);this.api=markRaw(client(this.identity));await this.checkSession();}
     }catch(error){this.report(error);}
   },
   beforeUnmount(){window.removeEventListener('beforeunload',this.onLeave);if(this.layer)this.$bluemap.mapViewer.markers.remove(this.layer);this.password='';},
   methods:{
+    /** With a `maps` configuration the panel follows the shown map; unsaved edits are never discarded by a map change. */
+    async activateMap(){
+      const mapId=this.currentMapId;if(!this.config?.maps||mapId===undefined)return;
+      if(this.identity&&this.identity.mapId===mapId){this.pendingSwitch=false;return;}
+      if(this.dirty||this.formDirty||this.busy){this.pendingSwitch=true;return;}
+      this.pendingSwitch=false;this.base=null;this.draft=[];this.current=null;this.readOnly=false;this.clearForm();
+      const next=identityForMap(this.config,mapId);
+      if(!next){this.identity=null;this.api=null;this.notConfigured=true;this.message='';this.renderMarkers();return;}
+      this.notConfigured=false;this.identity=next;this.api=markRaw(client(next));await this.checkSession();
+    },
     t(key){return hostingText(this.$i18n.locale,key);},
     report(error){const keys=['configuration','unavailable','invalidResponse','signInRequired','readOnly','conflict'];this.message=keys.includes(error.message)?error.message:'unavailable';if(error.message==='signInRequired'){this.signedIn=false;this.renderMarkers();}if(error.message==='readOnly')this.readOnly=true;},
     async checkSession(){if(this.busy)return;this.busy=true;try{const state=await this.api.session();this.signedIn=state.signedIn===true;this.readOnly=false;if(!this.signedIn)this.message='signInRequired';else if(!this.base){this.base=await this.api.read();this.draft=clone(this.base.annotations);this.message='loaded';}this.renderMarkers();}catch(error){this.report(error);}finally{this.busy=false;}},

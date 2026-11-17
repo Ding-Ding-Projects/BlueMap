@@ -198,3 +198,20 @@
     }
   }
 }
+
+// Server-provided custom layers: icon size, opacity and label behaviour come from the viewer's layer settings.
+#map-container .bm-marker-html.bm-cl {
+  $sizes: (small: 20px, medium: 28px, large: 40px);
+  @each $name, $px in $sizes {
+    &.bm-cl-size-#{$name} {
+      .bm-marker-poi-icon { width: $px; height: $px; }
+      .bm-marker-poi-label { transform: translate(-50%, -100%) translate(0, calc(-0.6em - #{$px * 0.5})); }
+    }
+  }
+  @for $i from 1 through 10 {
+    &.bm-cl-op-#{$i} .bm-marker-poi-icon { opacity: $i * 0.1; }
+  }
+  &.bm-cl-labels-always .bm-marker-poi-label { opacity: 1; white-space: nowrap; }
+  &.bm-cl-labels-hover:hover .bm-marker-poi-label { opacity: 1; }
+  &.bm-cl-labels-never .bm-marker-poi-label { display: none; }
+}

@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {hostingConfig,markerFromForm,validMarker,documentFor,client,mergeAnnotations,viewerMarker} from '../src/js/hosting/annotations.mjs';
+import {hostingConfig,identityForMap,markerFromForm,validMarker,documentFor,client,mergeAnnotations,viewerMarker} from '../src/js/hosting/annotations.mjs';
 const identity={projectId:'project',mapId:'world',dimension:'overworld'};
 const marker=(id='one',label='Town')=>({id,mapId:'world',label,detail:'Note',position:{x:0,y:64,z:0},colour:'#4f8cff',visible:true,createdAt:'2026-10-23',updatedAt:'2026-10-23',kind:'poi'});
 const doc=(annotations=[marker()],revision=0)=>({version:1,identity,revision,updatedAt:'',updatedBy:'',annotations});
@@ -12,3 +12,12 @@ test('protocol uses cookies, no cache and refuses redirects; writes bind revisio
 test('401, 403 and 409 preserve caller draft and validate conflicting identity',async()=>{const draft=[marker('one','Draft')];for(const [status,key] of [[401,'signInRequired'],[403,'readOnly'],[409,'conflict']]){const api=client(identity,async()=>({ok:false,status,json:async()=>({current:doc([marker()],1)})}));await assert.rejects(api.save(0,draft),e=>e.message===key&&(status!==409||e.current.revision===1));assert.equal(draft[0].label,'Draft');}const bad=client(identity,async()=>({ok:false,status:409,json:async()=>({current:{...doc(),identity:{...identity,mapId:'elsewhere'}}})}));await assert.rejects(bad.save(0,draft),/invalidResponse/);});
 
 test('numeric component strings normalize while empty coordinates remain invalid',()=>{const form={...marker(),position:{x:'12',y:'64',z:'-8'},points:[]};const normalized=markerFromForm(form);assert.deepEqual(normalized.position,{x:12,y:64,z:-8});assert.equal(normalized.points,undefined);assert.equal(validMarker(normalized,'world'),true);assert.equal(validMarker(markerFromForm({...form,position:{...form.position,x:''}}),'world'),false);});
+
+test('configuration accepts an optional maps table and resolves the identity per shown map',()=>{
+  const plain=hostingConfig(identity);assert.equal(plain.maps,undefined);assert.deepEqual(identityForMap(plain,'anything'),identity);
+  const config=hostingConfig({...identity,maps:{world:{dimension:'overworld'},world_nether:{dimension:'nether'}}});
+  assert.deepEqual(identityForMap(config,'world_nether'),{projectId:'project',mapId:'world_nether',dimension:'nether'});
+  assert.equal(identityForMap(config,'elsewhere'),null);assert.equal(identityForMap(config,undefined),null);assert.equal(identityForMap(config,'__proto__'),null);
+  for(const maps of [[],{},{world:{}},{world:{dimension:''}},{'':{dimension:'x'}},{world:'overworld'}])assert.throws(()=>hostingConfig({...identity,maps}),/configuration/);
+  assert.throws(()=>hostingConfig({...identity,maps:Object.fromEntries(Array.from({length:65},(_,i)=>['m'+i,{dimension:'d'}]))}));
+});

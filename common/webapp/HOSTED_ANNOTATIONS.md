@@ -11,7 +11,19 @@ A Worldlens deployment may place `worldlens-hosting.json` next to the exported v
 }
 ```
 
-The three identity fields must be nonempty strings. The optional API path accepts only the exact same-origin route shown above. A missing configuration (HTTP 404) keeps the viewer standalone. Invalid configuration and an unavailable host have distinct visible results. A deployment must expose the configuration beside the viewer, not beside the source tree or a different URL base.
+The three identity fields must be nonempty strings. A deployment with more than one map may add an optional `maps` object that lists each configured map and its dimension; the panel then follows the map being viewed:
+
+```json
+{
+  "projectId": "project-id",
+  "mapId": "world",
+  "dimension": "overworld",
+  "apiPath": "/bridge/annotations",
+  "maps": { "world": { "dimension": "overworld" }, "world_nether": { "dimension": "nether" } }
+}
+```
+
+When `maps` is present, the shown map's id is used as `mapId` together with that entry's `dimension` (up to 64 entries; every entry needs a nonempty `dimension`). The panel reloads when the shown map changes and says plainly when the shown map is not listed. A map change never discards unsaved edits: while a draft or open form exists the panel keeps the previous map until the edits are saved or discarded, and says so. Without `maps` the single configured map is used exactly as before. The optional API path accepts only the exact same-origin route shown above. A missing configuration (HTTP 404) keeps the viewer standalone. Invalid configuration and an unavailable host have distinct visible results. A deployment must expose the configuration beside the viewer, not beside the source tree or a different URL base.
 
 ## Working with annotations
 
@@ -43,13 +55,13 @@ Run the focused protocol checks from the repository root:
 node --test common/webapp/tests/annotations.test.mjs
 ```
 
-Seven checks cover configuration routing, identity and geometry rejection, safe text rendering, three-way conflict handling, request options, authenticated error paths and numeric field normalization. Vue single-file components receive focused compiler validation. These checks do not substitute for the root `build.bat` or real built-viewer interaction.
+Eight checks cover configuration routing, identity and geometry rejection, safe text rendering, three-way conflict handling, request options, authenticated error paths and numeric field normalization. Vue single-file components receive focused compiler validation. These checks do not substitute for the root `build.bat` or real built-viewer interaction.
 
 Pending acceptance: build through the root entrypoint, host the exact exported viewer against the real annotation service, exercise sign-in and server-refused access, save/readback with two browser sessions, verify conflicting edits/deletes, verify source marker refresh and map switching, and inspect desktop/narrow layouts, keyboard access, English/Cantonese/bilingual text, themes and supported scales. Real runtime screenshots are not included by this source-only lane. Full regex tooling and unrelated universal feature coverage are not claimed.
 
 ## 廣東話
 
-主機可在匯出檢視器首頁旁放置 `worldlens-hosting.json`，指定專案、地圖及維度。未設定時維持獨立檢視模式。共用註記使用同源登入及伺服器版本檢查；登入不代表具備編輯權限。
+主機可在匯出檢視器首頁旁放置 `worldlens-hosting.json`，指定專案、地圖及維度。若有多個地圖，可加入選用的 `maps` 物件，逐一列出地圖及其維度，面板便會跟隨目前顯示的地圖；有未儲存修改時切換地圖不會捨棄修改。未設定時維持獨立檢視模式。共用註記使用同源登入及伺服器版本檢查；登入不代表具備編輯權限。
 
 從主選單開啟共用註記，登入後選擇指定地圖。可編輯地點備註、路線、區域和立體區域，使用有標籤的座標欄位新增或移除點，再套用至草稿及儲存。若另一位編輯先行儲存，請逐項比較本機與共用版本，選擇保留哪一項，再套用合併並重新儲存。互不重疊的修改會自動合併；衝突不會自動覆蓋。
 
